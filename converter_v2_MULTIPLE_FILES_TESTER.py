@@ -26,7 +26,6 @@ tuplet = 0
 errLog = open('errLog.txt', 'w')
 missingUsuls = []
 
-
 def getNoteType(note, type, pay, payda, sira):
     global tuplet
 
@@ -106,7 +105,7 @@ def getNoteType(note, type, pay, payda, sira):
         #print(sira, temp_payPayda, '------------------')
 
 def getUsul(usul, file):
-    fpath = '/makams_usuls/usuls_v3_ANSI.txt'
+    fpath = 'makams_usuls/usuls_v3_ANSI.txt'
 
     usulID = []
     usulName = []
@@ -196,9 +195,9 @@ def getAccName(alter):
 
 def getKeySig(piecemakam, keysig):
 
-    print(piecemakam)q
+    print(piecemakam)
 
-    makamTree = etree.parse('/makams_usuls/Makamlar.xml')
+    makamTree = etree.parse('makams_usuls/Makamlar.xml')
     xpression = '//dataroot/Makamlar[makam_adi= $makam]/'
     makam_ = piecemakam
 
@@ -275,6 +274,7 @@ def txtToMusicXML(fpath):
     #finfo[2] usul
     #finfo[3] name
     #finfo[4] composer
+
     finfo = fpath.split('/')[-1].split('--')
     finfo[-1] = finfo[-1][:-4]
     #print(finfo)
@@ -339,6 +339,7 @@ def txtToMusicXML(fpath):
     #eof file read
     #print ('sumlinelength:')
     #print(sumlinelength)
+    #print(l_soz1)
 
     #cumulative time array
     l_time = [0]
@@ -527,8 +528,12 @@ def txtToMusicXML(fpath):
 	keyaccidental.text = 'slash-flat'
 	'''
 
+    #print(l_soz1)
     ###LOOP FOR NOTES
     #notes
+    word = 0
+    sentence = 0
+
     for cnt in range(0, len(l_nota)):
         if (l_kod[cnt + 1] != '8' and l_kod[cnt + 1] != '0' and l_kod[cnt + 1] != '35' and l_kod[cnt + 1] != '51'):
             if (l_nota[cnt] != 'r'):
@@ -546,11 +551,6 @@ def txtToMusicXML(fpath):
                 temp_duration = int(nof_divs * 4 * int(l_pay[cnt + 1]) / int(l_payda[cnt + 1]))  #duration calculation	UNIVERSAL
                 duration.text = str(temp_duration)  #XML assign		UNIVERSAL
 
-                '''
-				if int(l_payda[cnt+1]) == 4: type.text = 'quarter'	#UNIVERSAL
-				if int(l_payda[cnt+1]) == 8: type.text = 'eighth'	#UNIVERSAL
-				if int(l_payda[cnt+1]) == 16: type.text = '16th'	#UNIVERSAL
-				'''
                 getNoteType(note, type, l_pay[cnt + 1], l_payda[cnt + 1], l_sira[cnt + 1])
 
                 step = etree.SubElement(pitch, 'step')   #note pitch step XML create
@@ -587,9 +587,37 @@ def txtToMusicXML(fpath):
                 elif l_acc[cnt] == '-8':
                     accidental.text = b_bmucennep
 
+                #LYRICS PART
+                templyric = l_soz1[cnt + 1] #get current lyric
+
                 lyric = etree.SubElement(note, 'lyric')
                 text = etree.SubElement(lyric, 'text')
-                text.text = l_soz1[cnt + 1]
+                text.text = templyric
+                #print(l_soz1[cnt + 1])
+
+                #lyrics word information
+                if len(templyric) > 0 and templyric != "." and templyric != "SAZ":
+                    spacechars = templyric.count(" ")
+                    syllabic = etree.SubElement(lyric, 'syllabic')
+                    if spacechars == 1:
+                        syllabic.text = "end"
+                        word = 0
+                        #print("word end", cnt)
+                    elif spacechars == 2:
+                        syllabic.text = "end"
+                        word = 0
+                        #print("word end", cnt)
+                        #SEGMENT END
+                        sentence = 1
+                    else:
+                        if word == 0:
+                            word = 1
+                            syllabic.text = "begin"
+                            #print("word start", cnt)
+                        elif word == 1:
+                            syllabic.text = "middle"
+                            #print("word middle", cnt)
+
             else:
                 note = etree.SubElement(measure[-1], 'note')  #note	UNIVERSAL
 
@@ -627,13 +655,13 @@ def txtToMusicXML(fpath):
 
     #printing xml file
     f = open(fpath[:-4] + '.xml', 'wb')
-    f.write(etree.tostring(score, pretty_print=True, xml_declaration=True, encoding='UTF-8',
+    f.write(etree.tostring(score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False ,
                            doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">'))
     f.close
 
 
 def singleFile():
-    txtToMusicXML('/home/hasan/PycharmProjects/SymbtTr/SymbTr_txt/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
+    txtToMusicXML('/home/burak/Desktop/SymbTrV2_04082014/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
 
 
 def multipleFiles():
