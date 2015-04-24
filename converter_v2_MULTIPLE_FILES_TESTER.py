@@ -541,6 +541,8 @@ def txtToMusicXML(fpath):
 
                 pitch = etree.SubElement(note, 'pitch')  #note pitch XML create
                 duration = etree.SubElement(note, 'duration')  #note duration XML create	UNIVERSAL
+                #stem = etree.SubElement(note, 'stem')  #note stem
+                #stem.text = "up"
                 type = etree.SubElement(note, 'type')  #note type XML create	UNIVERSAL
                 #print(l_kod[cnt+1], l_nota[cnt] , l_payda[cnt+1])
                 #print(l_payda[cnt+1])
@@ -608,7 +610,8 @@ def txtToMusicXML(fpath):
                         word = 0
                         #print("word end", cnt)
                         #SEGMENT END
-                        sentence = 1
+                        endline = etree.SubElement(lyric, 'end-line')
+                        #sentence = 1
                     else:
                         if word == 0:
                             word = 1
