@@ -21,6 +21,9 @@ d_bakiyye = 'sharp'
 d_kmucennep = 'slash-quarter-sharp'                #slash-quarter-sharp
 d_bmucennep = 'slash-sharp'
 
+#section list
+sectionList = ["1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
+
 tuplet = 0
 
 errLog = open('errLog.txt', 'w')
@@ -209,7 +212,7 @@ def getKeySig(piecemakam, keysig):
 
     for i in range(1, 10):
         try:
-            donanim.append((makamTree.xpath(xpression + 'Donanım-' + str(i), makam=makam_))[0].text)
+            donanim.append((makamTree.xpath(xpression + 'Donanim-' + str(i), makam=makam_))[0].text)
             if donanim[-1][:2] == 'La':
                 donanim[-1] = 'A' + donanim[-1][2:]
             elif donanim[-1][:2] == 'Si':
@@ -241,10 +244,10 @@ def getKeySig(piecemakam, keysig):
 
             keystep = etree.SubElement(keysig, 'key-step')
             keystep.text = temp_key[0]
-            ''' alteration is not working for microtones
-			keyalter = etree.SubElement(keysig, 'key-alter')
-			keyalter.text = temp_key[-2:]
-			'''
+            #''' alteration is not working for microtones
+            keyalter = etree.SubElement(keysig, 'key-alter')
+            keyalter.text = temp_key[-2:]
+			#'''
             keyaccidental = etree.SubElement(keysig, 'key-accidental')
             keyaccidental.text = getAccName(temp_key[-2:])
 
@@ -508,16 +511,17 @@ def txtToMusicXML(fpath):
     divs1 = etree.SubElement(atts1, 'divisions')
     divs1.text = str(nof_divs)
 
+    #key signature
+    keysig = etree.SubElement(atts1, 'key')
+    getKeySig(makam, keysig)
+    #print(makam)
+
     time = etree.SubElement(atts1, 'time')
     beats = etree.SubElement(time, 'beats')
     beatType = etree.SubElement(time, 'beat-type')
     beats.text = str(nof_beats)
     beatType.text = str(beat_type)
 
-    #key signature
-    keysig = etree.SubElement(atts1, 'key')
-    getKeySig(makam, keysig)
-    #print(makam)
 
     '''
 	keystep = etree.SubElement(keysig, 'key-step')
@@ -528,11 +532,12 @@ def txtToMusicXML(fpath):
 	keyaccidental.text = 'slash-flat'
 	'''
 
-    #print(l_soz1)
+    print(l_acc)
     ###LOOP FOR NOTES
     #notes
     word = 0
     sentence = 0
+    section = ""
 
     for cnt in range(0, len(l_nota)):
         if (l_kod[cnt + 1] != '8' and l_kod[cnt + 1] != '0' and l_kod[cnt + 1] != '35' and l_kod[cnt + 1] != '51'):
@@ -557,48 +562,54 @@ def txtToMusicXML(fpath):
 
                 step = etree.SubElement(pitch, 'step')   #note pitch step XML create
                 step.text = l_nota[cnt]                  #step val #XML assign
-                octave = etree.SubElement(pitch, 'octave')  #note pitch octave XML create
-                octave.text = l_oct[cnt]  #octave val XML assign
 
                 #setting accidentals
                 #sharps
-                accidental = etree.SubElement(note, 'accidental')  #accidental XML create
-                #print(cnt, ' ', len(l_acc))
-                if l_acc[cnt] == '+1':
-                    accidental.text = d_koma
-                    alter = etree.SubElement(pitch, 'alter')  #note alter
-                    alter.text = '0.5'
-                elif l_acc[cnt] == '+4':
-                    accidental.text = d_bakiyye
-                    alter = etree.SubElement(pitch, 'alter')  #note alter
-                    alter.text = '1'
-                elif l_acc[cnt] == '+5':
-                    accidental.text = d_kmucennep
-                elif l_acc[cnt] == '+8':
-                    accidental.text = d_bmucennep
-                elif l_acc[cnt] == '-1':
-                    accidental.text = b_koma
-                    alter = etree.SubElement(pitch, 'alter')  #note alter
-                    alter.text = '-0.5'
-                elif l_acc[cnt] == '-4':
-                    accidental.text = b_bakiyye
-                elif l_acc[cnt] == '-5':
-                    accidental.text = b_kmucennep
-                    alter = etree.SubElement(pitch, 'alter')  #note alter
-                    alter.text = '-1'
-                elif l_acc[cnt] == '-8':
-                    accidental.text = b_bmucennep
+                if l_acc[cnt] != '' and l_acc != 'r':
+                    accidental = etree.SubElement(note, 'accidental')  #accidental XML create
+                    #print(cnt, ' ', len(l_acc))
+                    if l_acc[cnt] == '+1':
+                        accidental.text = d_koma
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '0.5'
+                    elif l_acc[cnt] == '+4':
+                        accidental.text = d_bakiyye
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '0.5'
+                    elif l_acc[cnt] == '+5':
+                        accidental.text = d_kmucennep
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '0.5'
+                    elif l_acc[cnt] == '+8':
+                        accidental.text = d_bmucennep
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '0.5'
+                    elif l_acc[cnt] == '-1':
+                        accidental.text = b_koma
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '-0.5'
+                    elif l_acc[cnt] == '-4':
+                        accidental.text = b_bakiyye
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '-0.5'
+                    elif l_acc[cnt] == '-5':
+                        accidental.text = b_kmucennep
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '-0.5'
+                    elif l_acc[cnt] == '-8':
+                        accidental.text = b_bmucennep
+                        alter = etree.SubElement(pitch, 'alter')  #note alter
+                        alter.text = '-0.5'
+
+                octave = etree.SubElement(pitch, 'octave')  #note pitch octave XML create
+                octave.text = l_oct[cnt]  #octave val XML assign
 
                 #LYRICS PART
                 templyric = l_soz1[cnt + 1] #get current lyric
-
                 lyric = etree.SubElement(note, 'lyric')
-                text = etree.SubElement(lyric, 'text')
-                text.text = templyric
-                #print(l_soz1[cnt + 1])
 
                 #lyrics word information
-                if len(templyric) > 0 and templyric != "." and templyric != "SAZ":
+                if len(templyric) > 0 and templyric != "." and templyric not in sectionList:
                     spacechars = templyric.count(" ")
                     syllabic = etree.SubElement(lyric, 'syllabic')
                     if spacechars == 1:
@@ -620,6 +631,18 @@ def txtToMusicXML(fpath):
                         elif word == 1:
                             syllabic.text = "middle"
                             #print("word middle", cnt)
+
+                #current lyric text
+                text = etree.SubElement(lyric, 'text')
+                text.text = templyric
+                #print(l_soz1[cnt + 1])
+
+                #section information
+                if templyric in sectionList:
+                    lyric.set('name', templyric)
+                    section = templyric
+                else:
+                    lyric.set('name', section)
 
             else:
                 note = etree.SubElement(measure[-1], 'note')  #note	UNIVERSAL
@@ -699,8 +722,10 @@ def multipleFiles():
 #main
 if sys.argv[1] == '1':
     singleFile()
-else:
+elif sys.argv[1] == '2':
     multipleFiles()
+else:
+    print("No arguments.")
 
 errLog.write('\n'.join(set(missingUsuls)))
 errLog.write('\n' + str(len(set(missingUsuls))))
