@@ -493,7 +493,7 @@ def txtToMusicXML(fpath):
     sound.set('tempo', str(tempo))
     #print('tempo '+ str(tempo))
 
-    nof_divs = 24
+    nof_divs = 96
     nof_beats = 4  #4
     beat_type = 4  #4
     if (usul != 'serbest' and usul != 'belirsiz'):
