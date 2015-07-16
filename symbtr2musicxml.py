@@ -21,8 +21,11 @@ d_bakiyye = 'sharp'
 d_kmucennep = 'slash-quarter-sharp'                #slash-quarter-sharp
 d_bmucennep = 'slash-sharp'
 
+altervalues = {'quarter-flat' : "-0.5", 'slash-flat': None, 'flat' : '-1', 'double-slash-flat' : None,
+             'quarter-sharp' : '+0.5', 'slash-sharp' : None, 'sharp' : "+1", 'double-slash-sharp' : None}
+
 #section list
-sectionList = ["1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
+sectionList = ["1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
 
 tuplet = 0
 
@@ -416,11 +419,19 @@ class symbtrscore(object):
         if acc not in ['', 'r']:
             accidental = etree.SubElement(note, 'accidental')  #accidental XML create
             accidental.text = xmlaccidental[acc]
+            '''
             alter = etree.SubElement(pitch, 'alter')
             if int(acc) > 0:
-                alter.text = '0.5'
+                alter.text = '1'
             else:
-                alter.text = '-0.5'
+                alter.text = '-1'
+            '''
+            self.addalter(pitch, xmlaccidental[acc])
+
+    def addalter(self, pitch, acc):
+        if altervalues[acc] != None:
+            alter = etree.SubElement(pitch, 'alter')
+            alter.text = altervalues[acc]
 
     def addtimemodification(self, note):
         global tuplet
@@ -441,6 +452,32 @@ class symbtrscore(object):
             tupl.set('type', 'stop')
             #tupl.set('bracket', 'yes')
             tuplet = 0
+
+    def usulchange(self, measure, tempatts, temppay, temppayda, nof_divs, templyric):
+        nof_beats = int(temppay)
+        beat_type = int(temppayda)
+        measureLength = nof_beats * nof_divs * (4 / float(beat_type))
+        #print(nof_beats, beat_type)
+        #print(measureSum)
+        time = etree.SubElement(tempatts, 'time')
+        beats = etree.SubElement(time, 'beats')
+        beatType = etree.SubElement(time, 'beat-type')
+        beats.text = str(nof_beats)
+        beatType.text = str(beat_type)
+
+        #1st measure direction: usul and makam info
+        #						tempo(metronome)
+        direction = etree.SubElement(measure, 'direction')
+        direction.set('placement', 'above')
+        directionType = etree.SubElement(direction, 'direction-type')
+
+        #usul info
+        words = etree.SubElement(directionType, 'words')
+        words.set('default-y', '35')
+        if  templyric:
+            words.text = 'Usul: ' + templyric.title()
+
+        return  measureLength
 
     def xmlconverter(self):
         ###CREATE MUSIC XML
@@ -532,17 +569,18 @@ class symbtrscore(object):
         tempatts = ""
 
         for cnt in range(1, len(self.l_nota)):
-            if self.l_kod[cnt] not in ['0', '8', '35', '51', '53', '54', '55']:
-                note = etree.SubElement(measure[-1], 'note')  #note	UNIVERSAL
 
-                tempkod = self.l_kod[cnt]
-                tempsira = self.l_sira[cnt]
-                temppay = self.l_pay[cnt]
-                temppayda = self.l_payda[cnt]
-                tempnota = self.l_nota[cnt]
-                tempacc = self.l_acc[cnt]
-                tempoct = self.l_oct[cnt]
-                templyric = self.l_soz1[cnt]
+            tempkod = self.l_kod[cnt]
+            tempsira = self.l_sira[cnt]
+            temppay = self.l_pay[cnt]
+            temppayda = self.l_payda[cnt]
+            tempnota = self.l_nota[cnt]
+            tempacc = self.l_acc[cnt]
+            tempoct = self.l_oct[cnt]
+            templyric = self.l_soz1[cnt]
+
+            if tempkod not in ['0', '8', '35', '51', '53', '54', '55']:
+                note = etree.SubElement(measure[-1], 'note')  #note	UNIVERSAL
 
                 if tempnota != 'r':
                     pitch = etree.SubElement(note, 'pitch')  #note pitch XML create
@@ -590,9 +628,11 @@ class symbtrscore(object):
                     #section information
                     if templyric in sectionList:
                         lyric.set('name', templyric)
+                        '''
                         bookmark = etree.SubElement(tempatts, 'bookmark')
                         bookmarkid = etree.SubElement(bookmark, 'id')
                         bookmarkid.text = templyric
+                        '''
                         #section = templyric
                     else:
                         lyric.set('name', section)
@@ -608,6 +648,12 @@ class symbtrscore(object):
                     tempatts = etree.SubElement(measure[-1], 'attributes')
                     measureSum = 0
                     #eof notes
+            elif tempkod == '51':
+                #print('XX')
+                try:
+                    measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
+                except:
+                    print('Kod', tempkod, 'but no time information.')
 
     def writexml(self):
         #printing xml file
@@ -668,8 +714,8 @@ errLog.write('\n' + str(len(set(missingUsuls))))
 errLog.close()
 '''
 
-piece = symbtrscore('/home/burak/Desktop/SymbTrV2_04082014/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
-#piece = symbtrscore('/home/burak/Downloads/nihavent--sazsemaisi--aksaksemai----vecdi_seyhun.txt')
+#piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
+piece = symbtrscore('C:/Users/Burak/Downloads/nihavent--sazsemaisi--aksaksemai----vecdi_seyhun.txt')
 piece.convertsymbtr2xml()
 
 print(piece.l_notaAE, len(piece.l_notaAE))
