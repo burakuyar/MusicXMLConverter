@@ -659,13 +659,6 @@ def txtToMusicXML(fpath):
                     nof_divs * 4 * int(l_pay[cnt + 1]) / int(l_payda[cnt + 1]))  #duration calculation	UNIVERSAL
                 duration.text = str(temp_duration)  #XML assign		UNIVERSAL
 
-                ##OLD PART FOR NOTE TYPES
-                '''
-				if int(l_payda[cnt+1]) == 4: type.text = 'quarter'	#UNIVERSAL
-				if int(l_payda[cnt+1]) == 8: type.text = 'eighth'	#UNIVERSAL
-				if int(l_payda[cnt+1]) == 16: type.text = '16th'	#UNIVERSAL
-				'''
-                ##END OF OLD PART FOR NOTE TYPES
                 getNoteType(note, type, l_pay[cnt + 1], l_payda[cnt + 1], l_sira[cnt + 1])
 
             measureSum += temp_duration
@@ -687,7 +680,8 @@ def txtToMusicXML(fpath):
 
 
 def singleFile():
-    txtToMusicXML('/home/burak/Desktop/SymbTrV2_04082014/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
+    #txtToMusicXML('/home/burak/Desktop/SymbTrV2_04082014/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
+    txtToMusicXML('/home/burak/Downloads/nihavent--sazsemaisi--aksaksemai----vecdi_seyhun.txt')
 
 
 def multipleFiles():
