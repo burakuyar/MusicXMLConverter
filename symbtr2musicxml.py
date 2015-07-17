@@ -387,13 +387,11 @@ class symbtrscore(object):
         if len(templyric) > 0 and templyric != "." and templyric not in sectionList:
             spacechars = templyric.count(" ")
             syllabic = etree.SubElement(lyric, 'syllabic')
-            if spacechars == 1:
+            if spacechars >= 1:
                 syllabic.text = "end"
                 word = 0
                 #print("word end", cnt)
             elif spacechars == 2:
-                syllabic.text = "end"
-                word = 0
                 #print("word end", cnt)
                 #SEGMENT END
                 endlineflag = 1
@@ -478,6 +476,10 @@ class symbtrscore(object):
             words.text = 'Usul: ' + templyric.title()
 
         return  measureLength
+
+    def setsection(self, tempmeasurehead, templyric):
+        tempheadsection = tempmeasurehead.find(".//lyric")
+        tempheadsection.set('name', templyric)
 
     def xmlconverter(self):
         ###CREATE MUSIC XML
@@ -565,8 +567,9 @@ class symbtrscore(object):
         #notes
         word = 0
         sentence = 0
-        section = ""
+        section = 0
         tempatts = ""
+        tempmeasurehead = ""
 
         for cnt in range(1, len(self.l_nota)):
 
@@ -627,15 +630,11 @@ class symbtrscore(object):
 
                     #section information
                     if templyric in sectionList:
-                        lyric.set('name', templyric)
-                        '''
-                        bookmark = etree.SubElement(tempatts, 'bookmark')
-                        bookmarkid = etree.SubElement(bookmark, 'id')
-                        bookmarkid.text = templyric
-                        '''
+                        #lyric.set('name', templyric)
+                        self.setsection(tempmeasurehead, templyric)
                         #section = templyric
                     else:
-                        lyric.set('name', section)
+                        lyric.set('name', str(section))
 
                 measureSum += temp_duration
                 #print(temp_duration, ' ', measureSum, ' ' , measureLength,' ',i)
@@ -647,6 +646,7 @@ class symbtrscore(object):
                     measure[-1].set('number', str(i))
                     tempatts = etree.SubElement(measure[-1], 'attributes')
                     measureSum = 0
+                    tempmeasurehead = measure[-1]
                     #eof notes
             elif tempkod == '51':
                 #print('XX')
@@ -714,8 +714,8 @@ errLog.write('\n' + str(len(set(missingUsuls))))
 errLog.close()
 '''
 
-#piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
-piece = symbtrscore('C:/Users/Burak/Downloads/nihavent--sazsemaisi--aksaksemai----vecdi_seyhun.txt')
+piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
+#piece = symbtrscore('C:/Users/Burak/Downloads/nihavent--sazsemaisi--aksaksemai----vecdi_seyhun.txt')
 piece.convertsymbtr2xml()
 
 print(piece.l_notaAE, len(piece.l_notaAE))
