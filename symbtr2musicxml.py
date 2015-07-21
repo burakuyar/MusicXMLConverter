@@ -25,7 +25,7 @@ altervalues = {'quarter-flat' : "-0.5", 'slash-flat': None, 'flat' : '-1', 'doub
              'quarter-sharp' : '+0.5', 'slash-sharp' : None, 'sharp' : "+1", 'double-slash-sharp' : None}
 
 #section list
-sectionList = ["1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
+sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
 
 tuplet = 0
 
@@ -267,6 +267,7 @@ class symbtrscore(object):
         self.tuplet = 0
 
         self.score = None
+        self.sections = []
 
     def readsymbtr(self):
         finfo = self.fpath.split('/')[-1].split('--')
@@ -381,21 +382,25 @@ class symbtrscore(object):
         except:
             return 60000 * 4 * int(pay2) / (int(ms2) * int(payda2))
 
-    def addwordinfo(self, lyric, templyric, word):
-        endlineflag = 0
+    def addwordinfo(self, lyric, templyric, word, endlineflag):
+        #endlineflag = 0
+        spacechars = 0
         #lyrics word information
         if len(templyric) > 0 and templyric != "." and templyric not in sectionList:
             spacechars = templyric.count(" ")
+            #print(spacechars)
             syllabic = etree.SubElement(lyric, 'syllabic')
-            if spacechars >= 1:
-                syllabic.text = "end"
-                word = 0
-                #print("word end", cnt)
-            elif spacechars == 2:
+            if spacechars == 2:
                 #print("word end", cnt)
                 #SEGMENT END
                 endlineflag = 1
+                syllabic.text = "end"
+                word = 0
                 #sentence = 1
+            elif spacechars >= 1:
+                syllabic.text = "end"
+                word = 0
+                #print("word end", cnt)
             else:
                 if word == 0:
                     syllabic.text = "begin"
@@ -404,6 +409,7 @@ class symbtrscore(object):
                 elif word == 1:
                     syllabic.text = "middle"
                     #print("word middle", cnt)
+        #print(templyric, endlineflag, word, spacechars)
         return word, endlineflag
 
     def addduration(self, duration, pay, payda):
@@ -477,8 +483,11 @@ class symbtrscore(object):
 
         return  measureLength
 
-    def setsection(self, tempmeasurehead, templyric):
-        tempheadsection = tempmeasurehead.find(".//lyric")
+    def setsection(self, tempmeasurehead, lyric, templyric):
+        if templyric != "SAZ":
+            tempheadsection = tempmeasurehead.find(".//lyric")
+        else:
+            tempheadsection = lyric
         tempheadsection.set('name', templyric)
 
     def xmlconverter(self):
@@ -567,9 +576,10 @@ class symbtrscore(object):
         #notes
         word = 0
         sentence = 0
-        section = 0
+        tempsection = 0
+        endlineflag = 1
         tempatts = ""
-        tempmeasurehead = ""
+        tempmeasurehead = measure[-1]
 
         for cnt in range(1, len(self.l_nota)):
 
@@ -618,7 +628,7 @@ class symbtrscore(object):
                     #LYRICS PART
                     lyric = etree.SubElement(note, 'lyric')
 
-                    word, endlineflag = self.addwordinfo(lyric, templyric, word)    #word keeps the status of current syllable
+                    word, endlineflag = self.addwordinfo(lyric, templyric, word, endlineflag)    #word keeps the status of current syllable
                     #current lyric text
                     text = etree.SubElement(lyric, 'text')
                     text.text = templyric
@@ -626,15 +636,24 @@ class symbtrscore(object):
                     if endlineflag == 1:
                         endline = etree.SubElement(lyric, 'end-line')
 
-                    #print(l_soz1[cnt])
+                    print(cnt, endlineflag, measureSum)
 
                     #section information
-                    if templyric in sectionList:
+                    if templyric in sectionList:        #instrumental pieces and pieces with section keywords
                         #lyric.set('name', templyric)
-                        self.setsection(tempmeasurehead, templyric)
+                        self.setsection(tempmeasurehead, lyric, templyric)
+                        self.sections.append(templyric)
                         #section = templyric
+                    elif (endlineflag == 1 and measureSum == 0) or \
+                            (endlineflag == 0 and measureSum == 0 and self.sections[-1] == "SAZ"):  #line endings
+                        tempsectionid = "Section" + str(tempsection)
+                        self.setsection(tempmeasurehead, lyric, tempsectionid)
+                        self.sections.append(tempsectionid)
+                        tempsection += 1
+                        endlineflag = 0
                     else:
-                        lyric.set('name', str(section))
+                        #tempsection += 1
+                        lyric.set('name', "")
 
                 measureSum += temp_duration
                 #print(temp_duration, ' ', measureSum, ' ' , measureLength,' ',i)
@@ -720,3 +739,4 @@ piece.convertsymbtr2xml()
 
 print(piece.l_notaAE, len(piece.l_notaAE))
 print(piece.l_nota, len(piece.l_nota))
+print(piece.sections)
