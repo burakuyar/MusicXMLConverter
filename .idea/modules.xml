@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MusicXMLConverter.iml" filepath="$PROJECT_DIR$/.idea/MusicXMLConverter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MusicXML_to_Lilypond/.idea/MusicXML_to_Lilypond.iml" filepath="$PROJECT_DIR$/../MusicXML_to_Lilypond/.idea/MusicXML_to_Lilypond.iml" />
     </modules>
   </component>
 </project>

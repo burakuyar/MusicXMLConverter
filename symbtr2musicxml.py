@@ -303,7 +303,7 @@ class symbtrscore(object):
             if len(temp_line) == 0:
                 break
             elif len(temp_line.split('\t')) == 1:
-                l_soz1[-1] += temp_line
+                self.l_soz1[-1] += temp_line
             else:
                 temp_line = temp_line.split('\t')
                 temp_line.reverse()
@@ -328,10 +328,28 @@ class symbtrscore(object):
                     self.l_soz1.append('')
                 try:
                     self.l_offset.append(temp_line.pop())
-                    self.l_offset[-1] = l_offset[-1][:-1]
+                    self.l_offset[-1] = self.l_offset[-1][:-1]
                 except:
                     self.l_offset.append('')
+
                 i += 1
+
+                if self.l_pay[-1] == '5':
+                    self.l_pay[-1] = '2'
+
+                    self.l_sira.append(self.l_sira[-1])
+                    self.l_kod.append(self.l_kod[-1])
+                    self.l_nota53.append(self.l_nota53[-1])
+                    self.l_notaAE.append(self.l_notaAE[-1])
+                    self.l_koma53.append(self.l_koma53[-1])
+                    self.l_komaAE.append(self.l_komaAE[-1])
+                    self.l_pay.append('3')
+                    self.l_payda.append(self.l_payda[-1])
+                    self.l_ms.append(self.l_ms[-1])
+                    self.l_LNS.append(self.l_LNS[-1])
+                    self.l_velOn.append(self.l_velOn[-1])
+                    self.l_soz1.append('')
+                    self.l_offset.append('')
         f.close
         #eof file read
         #print ('sumlinelength:')
@@ -390,19 +408,22 @@ class symbtrscore(object):
             spacechars = templyric.count(" ")
             #print(spacechars)
             syllabic = etree.SubElement(lyric, 'syllabic')
-            if spacechars == 2:
+            if spacechars == 2 and word == 1:
                 #print("word end", cnt)
                 #SEGMENT END
                 endlineflag = 1
                 syllabic.text = "end"
                 word = 0
                 #sentence = 1
-            elif spacechars >= 1:
+            elif spacechars >= 1 and word == 1:
                 syllabic.text = "end"
                 word = 0
                 #print("word end", cnt)
             else:
-                if word == 0:
+                if word == 0 and spacechars in [1, 2]:
+                    syllabic.text = "single"
+                    word = 0
+                elif word == 0:
                     syllabic.text = "begin"
                     word = 1
                     #print("word start", cnt)
@@ -687,9 +708,8 @@ class symbtrscore(object):
         self.writexml()
 
 def singleFile():
-    x
-    #txtToMusicXML('/home/burak/Desktop/SymbTrV2_04082014/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
 
+    txtToMusicXML('/home/burak/Desktop/SymbTrV2_04082014/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
 
 def multipleFiles():
     errorFiles = []
@@ -700,7 +720,10 @@ def multipleFiles():
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file, '*.txt') and file != 'errLog.txt' and file != 'errorFiles.txt':
             print(file)
-            #txtToMusicXML(file)
+
+            piece = symbtrscore(file)
+            piece.convertsymbtr2xml()
+
             totalFiles += 1
             '''
 			try:
@@ -733,8 +756,8 @@ errLog.write('\n' + str(len(set(missingUsuls))))
 errLog.close()
 '''
 
-piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
-#piece = symbtrscore('C:/Users/Burak/Downloads/nihavent--sazsemaisi--aksaksemai----vecdi_seyhun.txt')
+#piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/buselik--agirsemai--aksaksemai--niyaz-i_nagme-i--comlekcizade_recep_celebi.txt')
+piece = symbtrscore('C:/Users/Burak/Downloads/yegah--sarki--duyek--ay_buyurken--alaeddin_yavasca.txt')
 piece.convertsymbtr2xml()
 
 print(piece.l_notaAE, len(piece.l_notaAE))
