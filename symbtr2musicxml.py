@@ -757,7 +757,7 @@ errLog.close()
 '''
 
 #piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/buselik--agirsemai--aksaksemai--niyaz-i_nagme-i--comlekcizade_recep_celebi.txt')
-piece = symbtrscore('C:/Users/Burak/Downloads/yegah--sarki--duyek--ay_buyurken--alaeddin_yavasca.txt')
+piece = symbtrscore('C:/Users/Burak/Downloads/huseyni--turku--14_4--tutam_yar--erzurum.txt')
 piece.convertsymbtr2xml()
 
 print(piece.l_notaAE, len(piece.l_notaAE))
