@@ -158,3 +158,4 @@ yuruksemai_ii_6_4	Yürüksemâî II (6/4)	6	4	6+6
 yuruksofyan	Yürüksofyan	2	4	2+1+1
 zafer	Zafer	5	8	
 zencir	Zencîr	4	4	
+kapali_curcuna	Kapalý Curcuna	10	8	

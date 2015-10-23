@@ -22,7 +22,7 @@ d_kmucennep = 'slash-quarter-sharp'                #slash-quarter-sharp
 d_bmucennep = 'slash-sharp'
 
 altervalues = {'quarter-flat' : "-0.5", 'slash-flat': None, 'flat' : '-1', 'double-slash-flat' : None,
-             'quarter-sharp' : '+0.5', 'slash-sharp' : None, 'sharp' : "+1", 'double-slash-sharp' : None}
+             'quarter-sharp' : '+0.5', 'slash-sharp' : None, 'sharp' : "+1", 'slash-quarter-sharp' : None}
 
 #section list
 sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
@@ -206,7 +206,7 @@ def getKeySig(piecemakam, keysig):
         try:
             donanim.append((makamTree.xpath(xpression + 'Donanim-' + str(i), makam=makam_))[0].text)
             donanim[-1] = trToWestern[donanim[-1][:2]] + donanim[-1][2:]
-            print(donanim[-1])
+            #print(donanim[-1])
         except:
             break
 
@@ -350,6 +350,27 @@ class symbtrscore(object):
                     self.l_velOn.append(self.l_velOn[-1])
                     self.l_soz1.append('')
                     self.l_offset.append('')
+
+                    print(self.fpath, "note time 5", self.l_sira[-1])
+
+                if self.l_pay[-1] == '7':
+                    self.l_pay[-1] = '3'
+
+                    self.l_sira.append(self.l_sira[-1])
+                    self.l_kod.append(self.l_kod[-1])
+                    self.l_nota53.append(self.l_nota53[-1])
+                    self.l_notaAE.append(self.l_notaAE[-1])
+                    self.l_koma53.append(self.l_koma53[-1])
+                    self.l_komaAE.append(self.l_komaAE[-1])
+                    self.l_pay.append('4')
+                    self.l_payda.append(self.l_payda[-1])
+                    self.l_ms.append(self.l_ms[-1])
+                    self.l_LNS.append(self.l_LNS[-1])
+                    self.l_velOn.append(self.l_velOn[-1])
+                    self.l_soz1.append('')
+                    self.l_offset.append('')
+
+                    print(self.fpath, "note time 7", self.l_sira[-1])
         f.close
         #eof file read
         #print ('sumlinelength:')
@@ -383,12 +404,12 @@ class symbtrscore(object):
                         try:
                             self.l_acc.append('+' + temp_note[3])
                         except:
-                            print(temp_note)
+                            print(temp_note, "accidental error 388")
                     else:
                         try:
                             self.l_acc.append('-' + temp_note[3])
                         except:
-                            print(temp_note)
+                            print(temp_note, "accidenal error 393")
             else:
                 self.l_nota.append('r')
                 self.l_oct.append('r')
@@ -512,6 +533,10 @@ class symbtrscore(object):
         tempheadsection.set('name', templyric)
 
     def xmlconverter(self):
+
+        global tuplet
+        tuplet = 0
+
         ###CREATE MUSIC XML
         #init
         self.score = etree.Element("score-partwise")  #score-partwise
@@ -627,7 +652,7 @@ class symbtrscore(object):
                 #print(l_payda[cnt+1])
                 #BAŞLA
                 if int(temppayda) == 0:
-                    print(tempsira + '\t' + tempkod + '\t' + self.fpath)
+                    print(tempsira + '\t' + tempkod + '\t' + self.fpath, "payda0 632")
                     continue
                 temp_duration = self.addduration(duration, temppay, temppayda)  #duration calculation	UNIVERSAL
 
@@ -657,7 +682,7 @@ class symbtrscore(object):
                     if endlineflag == 1:
                         endline = etree.SubElement(lyric, 'end-line')
 
-                    print(cnt, endlineflag, measureSum)
+                   # print(cnt, endlineflag, measureSum)
 
                     #section information
                     if templyric in sectionList:        #instrumental pieces and pieces with section keywords
@@ -697,7 +722,9 @@ class symbtrscore(object):
 
     def writexml(self):
         #printing xml file
-        f = open(self.fpath[:-4] + '.xml', 'wb')
+        outpath = self.fpath.replace("txt", "xml")
+        #print(outpath)
+        f = open(outpath[:-4] + '.xml', 'wb')
         f.write(etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False ,
                                doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">'))
         f.close
@@ -709,7 +736,8 @@ class symbtrscore(object):
 
 def singleFile():
 
-    txtToMusicXML('/home/burak/Desktop/SymbTrV2_04082014/beyati--sarki--aksak--benzemez_kimse--fehmi_tokay.txt')
+    piece = symbtrscore('txt/yeni-cargah--turku--sofyan--halkali_seker--eskisehir.txt')
+    piece.convertsymbtr2xml()
 
 def multipleFiles():
     errorFiles = []
@@ -717,22 +745,28 @@ def multipleFiles():
     cnvFiles = 0
     errFiles = 0
 
-    for file in os.listdir('.'):
+    for file in os.listdir('./txt'):
         if fnmatch.fnmatch(file, '*.txt') and file != 'errLog.txt' and file != 'errorFiles.txt':
             print(file)
 
-            piece = symbtrscore(file)
+            #'''
+            #---debugging
+            piece = symbtrscore("txt/" + file)
             piece.convertsymbtr2xml()
+            #'''
 
             totalFiles += 1
             '''
-			try:
-				txtToMusicXML(file)
-				cnvFiles += 1
-			except:
+            try:
+                piece = symbtrscore("txt/" + file)
+                piece.convertsymbtr2xml()
+                cnvFiles += 1
+            except:
 				errorFiles.append(file)
 				errFiles += 1
 			'''
+
+            print(totalFiles, cnvFiles, errFiles)
     f = open('errorFiles.txt', 'w')
     for item in errorFiles:
         f.write(item + '\n')
@@ -742,7 +776,7 @@ def multipleFiles():
     print('Failed: ', errFiles)
     print('Usul Conflict: ', len(set(missingUsuls)))
 
-'''
+#'''
 #main
 if sys.argv[1] == '1':
     singleFile()
@@ -754,12 +788,15 @@ else:
 errLog.write('\n'.join(set(missingUsuls)))
 errLog.write('\n' + str(len(set(missingUsuls))))
 errLog.close()
-'''
+#'''
 
 #piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/buselik--agirsemai--aksaksemai--niyaz-i_nagme-i--comlekcizade_recep_celebi.txt')
-piece = symbtrscore('C:/Users/Burak/Downloads/huseyni--turku--14_4--tutam_yar--erzurum.txt')
-piece.convertsymbtr2xml()
+#piece = symbtrscore('C:/Users/Burak/Downloads/huseyni--turku--14_4--tutam_yar--erzurum.txt')
+#piece = symbtrscore('txt/huseyni--turku--14_4--tutam_yar--erzurum.txt')
+#piece.convertsymbtr2xml()
 
+'''
 print(piece.l_notaAE, len(piece.l_notaAE))
 print(piece.l_nota, len(piece.l_nota))
 print(piece.sections)
+'''
