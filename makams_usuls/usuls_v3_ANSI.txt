@@ -92,7 +92,7 @@ hafif_32_8	Hafîf (32/8)	32	8
 havi	Hâvî	64	4	
 hezec	Hezeç	22	4	
 hezec	Hezeç	44	4	
-iki-bir	Ýki-Bir	12	8	
+iki_bir	Ýki-Bir	12	8	
 ikizaksak	Ýkiz Aksak	12	8	1+1+1+2+2+2+2+1
 iraksak	Iraksak	9	8	2+4+2+4+6
 katikofti	Katikofti	8	8	1+1+1+2+2+1
@@ -142,7 +142,7 @@ sofyan	Sofyan	4	4	2+1+1
 sofyan_4_2	Sofyan (4/2)	4	2	2+2+2+2
 sofyan_4_8	Sofyan (4/8)	4	8	2+2+2+2
 sofyan_ii	Sofyan II	4	4	2+1+1
-s-turkaksagi	S. Türkaksaðý	5	4	4+4+2
+sengin_turkaksagi	S. Türkaksaðý	5	4	4+4+2
 sureyya	Süreyya	5	8	4+4+2
 tekvurus	Tek Vuruþ	11	8	2+2+1+2+2+2
 tekvurus_11_4	Tek Vuruþ (11/4)	11	4	

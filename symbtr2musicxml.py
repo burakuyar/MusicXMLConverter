@@ -27,6 +27,8 @@ altervalues = {'quarter-flat' : "-0.5", 'slash-flat': None, 'flat' : '-1', 'doub
 #section list
 sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
 
+kodlist = []
+
 tuplet = 0
 
 errLog = open('errLog.txt', 'w')
@@ -205,10 +207,13 @@ def getKeySig(piecemakam, keysig):
     for i in range(1, 10):
         try:
             donanim.append((makamTree.xpath(xpression + 'Donanim-' + str(i), makam=makam_))[0].text)
-            donanim[-1] = trToWestern[donanim[-1][:2]] + donanim[-1][2:]
-            #print(donanim[-1])
+            #print(donanim, i)
+            for key, value in trToWestern.iteritems():
+                donanim[-1] = donanim[-1].replace(key, value)
+            #donanim[-1] = trToWestern[donanim[-1][:2]] + donanim[-1][2:]
+            #print(donanim[-1], i)
         except:
-            break
+            continue
 
     #print(makamName[0].text)
     #print(donanim)
@@ -295,6 +300,7 @@ class symbtrscore(object):
         f = open(self.fpath)
         i = 0
         sumlinelength = 0
+        global kodlist
 
         #read operation
         while 1:
@@ -322,6 +328,7 @@ class symbtrscore(object):
                 self.l_ms.append(temp_line.pop())
                 self.l_LNS.append(temp_line.pop())
                 self.l_velOn.append(temp_line.pop())
+
                 try:
                     self.l_soz1.append(temp_line.pop().decode('utf-8'))
                 except:
@@ -371,6 +378,10 @@ class symbtrscore(object):
                     self.l_offset.append('')
 
                     print(self.fpath, "note time 7", self.l_sira[-1])
+
+                #kodlist.append(self.l_kod[-1])
+        #kodlist = list(set(kodlist))
+
         f.close
         #eof file read
         #print ('sumlinelength:')
@@ -652,11 +663,12 @@ class symbtrscore(object):
                 #print(l_payda[cnt+1])
                 #BAŞLA
                 if int(temppayda) == 0:
-                    print(tempsira + '\t' + tempkod + '\t' + self.fpath, "payda0 632")
-                    continue
-                temp_duration = self.addduration(duration, temppay, temppayda)  #duration calculation	UNIVERSAL
-
-                timemodflag = getNoteType(note, type, temppay, temppayda, tempsira)
+                    print(tempsira + '\t' + tempkod + '\t' + self.fpath, "payda0 Line:632")
+                    temp_duration = 0
+                    #continue
+                else:
+                    temp_duration = self.addduration(duration, temppay, temppayda)  #duration calculation	UNIVERSAL
+                    timemodflag = getNoteType(note, type, temppay, temppayda, tempsira)
 
                 if tempnota != 'r':
                     step = etree.SubElement(pitch, 'step')   #note pitch step XML create
@@ -736,7 +748,7 @@ class symbtrscore(object):
 
 def singleFile():
 
-    piece = symbtrscore('txt/yeni-cargah--turku--sofyan--halkali_seker--eskisehir.txt')
+    piece = symbtrscore('txt/sehnaz--turku--sofyan--arpa_bugday--orta_anadolu.txt')
     piece.convertsymbtr2xml()
 
 def multipleFiles():
@@ -749,14 +761,14 @@ def multipleFiles():
         if fnmatch.fnmatch(file, '*.txt') and file != 'errLog.txt' and file != 'errorFiles.txt':
             print(file)
 
-            #'''
+            '''
             #---debugging
             piece = symbtrscore("txt/" + file)
             piece.convertsymbtr2xml()
             #'''
 
             totalFiles += 1
-            '''
+            #'''
             try:
                 piece = symbtrscore("txt/" + file)
                 piece.convertsymbtr2xml()
@@ -764,7 +776,7 @@ def multipleFiles():
             except:
 				errorFiles.append(file)
 				errFiles += 1
-			'''
+			#'''
 
             print(totalFiles, cnvFiles, errFiles)
     f = open('errorFiles.txt', 'w')
@@ -788,6 +800,7 @@ else:
 errLog.write('\n'.join(set(missingUsuls)))
 errLog.write('\n' + str(len(set(missingUsuls))))
 errLog.close()
+print(kodlist)
 #'''
 
 #piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/buselik--agirsemai--aksaksemai--niyaz-i_nagme-i--comlekcizade_recep_celebi.txt')
