@@ -30,6 +30,7 @@ sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TES
 kodlist = []
 
 tuplet = 0
+capitals = []
 
 errLog = open('errLog.txt', 'w')
 missingUsuls = []
@@ -273,6 +274,7 @@ class symbtrscore(object):
 
         self.score = None
         self.sections = []
+        self.capitals = []
 
     def readsymbtr(self):
         finfo = self.fpath.split('/')[-1].split('--')
@@ -282,6 +284,9 @@ class symbtrscore(object):
         self.form = finfo[1]
         self.usul = finfo[2]
         self.name = finfo[3]
+
+        if self.name == "":
+            self.name = self.makam + " " + self.form
 
         try:
             self.composer = finfo[4]
@@ -310,9 +315,11 @@ class symbtrscore(object):
                 break
             elif len(temp_line.split('\t')) == 1:
                 self.l_soz1[-1] += temp_line
+                #print(self.fpath, self.l_sira[-1], "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
             else:
                 temp_line = temp_line.split('\t')
                 temp_line.reverse()
+
                 #print(temp_line)
                 #print(len(temp_line))
                 #sumlinelength += len(temp_line)
@@ -341,8 +348,11 @@ class symbtrscore(object):
 
                 i += 1
 
-                if self.l_pay[-1] == '5':
-                    self.l_pay[-1] = '2'
+                if self.l_pay[-1] in ['5', '7']:
+                    temppay = int(self.l_pay[-1])
+                    self.l_pay[-1] = str(temppay/2)
+
+                    #self.l_pay[-1] = '2'
 
                     self.l_sira.append(self.l_sira[-1])
                     self.l_kod.append(self.l_kod[-1])
@@ -350,7 +360,7 @@ class symbtrscore(object):
                     self.l_notaAE.append(self.l_notaAE[-1])
                     self.l_koma53.append(self.l_koma53[-1])
                     self.l_komaAE.append(self.l_komaAE[-1])
-                    self.l_pay.append('3')
+                    self.l_pay.append(str(temppay/2+1))
                     self.l_payda.append(self.l_payda[-1])
                     self.l_ms.append(self.l_ms[-1])
                     self.l_LNS.append(self.l_LNS[-1])
@@ -358,26 +368,7 @@ class symbtrscore(object):
                     self.l_soz1.append('')
                     self.l_offset.append('')
 
-                    print(self.fpath, "note time 5", self.l_sira[-1])
-
-                if self.l_pay[-1] == '7':
-                    self.l_pay[-1] = '3'
-
-                    self.l_sira.append(self.l_sira[-1])
-                    self.l_kod.append(self.l_kod[-1])
-                    self.l_nota53.append(self.l_nota53[-1])
-                    self.l_notaAE.append(self.l_notaAE[-1])
-                    self.l_koma53.append(self.l_koma53[-1])
-                    self.l_komaAE.append(self.l_komaAE[-1])
-                    self.l_pay.append('4')
-                    self.l_payda.append(self.l_payda[-1])
-                    self.l_ms.append(self.l_ms[-1])
-                    self.l_LNS.append(self.l_LNS[-1])
-                    self.l_velOn.append(self.l_velOn[-1])
-                    self.l_soz1.append('')
-                    self.l_offset.append('')
-
-                    print(self.fpath, "note time 7", self.l_sira[-1])
+                    #print(self.fpath, "note time", temppay, self.l_pay[-1], self.l_pay[-2], self.l_sira[-1])
 
                 #kodlist.append(self.l_kod[-1])
         #kodlist = list(set(kodlist))
@@ -415,12 +406,12 @@ class symbtrscore(object):
                         try:
                             self.l_acc.append('+' + temp_note[3])
                         except:
-                            print(temp_note, "accidental error 388")
+                            print(temp_note, "accidental error 435")
                     else:
                         try:
                             self.l_acc.append('-' + temp_note[3])
                         except:
-                            print(temp_note, "accidenal error 393")
+                            print(temp_note, "accidenal error 440")
             else:
                 self.l_nota.append('r')
                 self.l_oct.append('r')
@@ -543,6 +534,12 @@ class symbtrscore(object):
             tempheadsection = lyric
         tempheadsection.set('name', templyric)
 
+    def countcapitals(self, str):
+        global capitals
+        if str.isupper():
+            capitals.append(str)
+            #print str, "YO"
+
     def xmlconverter(self):
 
         global tuplet
@@ -639,6 +636,7 @@ class symbtrscore(object):
         tempmeasurehead = measure[-1]
 
         for cnt in range(1, len(self.l_nota)):
+            graceflag = 0
 
             tempkod = self.l_kod[cnt]
             tempsira = self.l_sira[cnt]
@@ -649,21 +647,26 @@ class symbtrscore(object):
             tempoct = self.l_oct[cnt]
             templyric = self.l_soz1[cnt]
 
-            if tempkod not in ['0', '8', '35', '51', '53', '54', '55']:
+            if tempkod not in ['0', '35', '51', '53', '54', '55']: # kod8 çıkarıldı
                 note = etree.SubElement(measure[-1], 'note')  #note	UNIVERSAL
+
+                if tempkod == '8':
+                    graceflag = 1
+                    grace = etree.SubElement(note, 'grace')  #note pitch XML create
 
                 if tempnota != 'r':
                     pitch = etree.SubElement(note, 'pitch')  #note pitch XML create
                 else:
                     rest = etree.SubElement(note, 'rest')  #note rest XML create	REST
 
-                duration = etree.SubElement(note, 'duration')  #note duration XML create	UNIVERSAL
-                type = etree.SubElement(note, 'type')  #note type XML create	UNIVERSAL
+                if graceflag == 0:
+                    duration = etree.SubElement(note, 'duration')  #note duration XML create	UNIVERSAL
+                    type = etree.SubElement(note, 'type')  #note type XML create	UNIVERSAL
                 #print(l_kod[cnt+1], l_nota[cnt] , l_payda[cnt+1])
                 #print(l_payda[cnt+1])
                 #BAŞLA
                 if int(temppayda) == 0:
-                    print(tempsira + '\t' + tempkod + '\t' + self.fpath, "payda0 Line:632")
+                    #print(tempsira + '\t' + tempkod + '\t' + self.fpath, "payda0 Line:632", "grace =", graceflag)
                     temp_duration = 0
                     #continue
                 else:
@@ -690,6 +693,7 @@ class symbtrscore(object):
                     #current lyric text
                     text = etree.SubElement(lyric, 'text')
                     text.text = templyric
+                    self.countcapitals(templyric)
 
                     if endlineflag == 1:
                         endline = etree.SubElement(lyric, 'end-line')
@@ -731,6 +735,8 @@ class symbtrscore(object):
                     measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
                 except:
                     print('Kod', tempkod, 'but no time information.')
+            elif tempkod == '0':
+                print self.fpath, "--------------------------------------------------------------------------------------"
 
     def writexml(self):
         #printing xml file
@@ -744,12 +750,13 @@ class symbtrscore(object):
     def convertsymbtr2xml(self):
         self.readsymbtr()
         self.xmlconverter()
-        self.writexml()
+        #self.writexml()
 
 def singleFile():
 
-    piece = symbtrscore('txt/sehnaz--turku--sofyan--arpa_bugday--orta_anadolu.txt')
+    piece = symbtrscore('txt/acemasiran--pesrev--muhammes----gazi_giray_han.txt')
     piece.convertsymbtr2xml()
+    #print(piece.printnotes())
 
 def multipleFiles():
     errorFiles = []
@@ -801,6 +808,11 @@ errLog.write('\n'.join(set(missingUsuls)))
 errLog.write('\n' + str(len(set(missingUsuls))))
 errLog.close()
 print(kodlist)
+
+f = open('capitals.txt', 'w')
+for item in set(capitals):
+    f.write(item.encode('utf8') + '\n')
+f.close()
 #'''
 
 #piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/buselik--agirsemai--aksaksemai--niyaz-i_nagme-i--comlekcizade_recep_celebi.txt')
