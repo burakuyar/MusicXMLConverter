@@ -82,7 +82,8 @@ fahte	Fahte	20	4
 fer	Fer	16	4	2+1+1+2+2+1+1+1+1+2+1+1
 ferimuhammes_16_2	Fer'i Muhammes (16/2)	16	2	
 ferimuhammes_16_4	Fer'i Muhammes (16/4)	16	4	
-ferimuhammes_16_8	Fer'i Muhammes (16/8)	16	8	
+ferimuhammes_16_8	Fer'i Muhammes (16/8)	16	8
+ferimuhammes	Fer'i Muhammes (16/8)	16	8
 firengifer	Fireng-i Fer	28	4	
 frenkcin	Frenkçîn	12	8	1+2+1+2+1+1+1+1+1+1
 frenkcin_12_4	Frenkçîn (12/4)	12	4	1+2+1+2+1+1+1+1+1+1
