@@ -319,9 +319,8 @@ class symbtrscore(object):
 
             for e in self.workmbid:
                 self.worklink.append("https://musicbrainz.org/work/" + e)
-
-            print(self.workmbid)
-            print(self.worklink)
+            #print(self.workmbid)
+            #print(self.worklink)
 
     def readsymbtr(self):
         finfo = self.fpath.split('/')[-1].split('--')
@@ -413,6 +412,8 @@ class symbtrscore(object):
                 if lastnote.tuplet > 0:
                     print("Tuplet", lastnote.tuplet, lastnote.sira)
                     #print(self.fpath, "note time", temppay, self.l_pay[-1], self.l_pay[-2], self.l_sira[-1], "AAAAAAAAAAAAAAAA")
+                if lastnote.pay == '0' and lastnote.kod != '8':
+                    print("DURATION ERROR:", self.fpath, lastnote.sira, lastnote.kod, lastnote.pay)
                 """
 
                 if lastnote.kod in koddict:
@@ -426,8 +427,8 @@ class symbtrscore(object):
         kodlist = list(set(kodlist))
         if '53' in self.scorenotes:
             self.phraseboundaryinfo = 1
-        print("Kods used:", kodlist)
-        print("Koddict:", koddict)
+        #print("Kods used:", kodlist)
+        #print("Koddict:", koddict)
 
         f.close
         #eof file read
@@ -753,10 +754,13 @@ class symbtrscore(object):
         #print(makam)
 
         time = etree.SubElement(atts1, 'time')
-        beats = etree.SubElement(time, 'beats')
-        beatType = etree.SubElement(time, 'beat-type')
-        beats.text = str(nof_beats)
-        beatType.text = str(beat_type)
+        if self.usul in ['serbest', 'belirsiz']:
+            senzamisura = etree.SubElement(time, 'senza-misura')
+        else:
+            beats = etree.SubElement(time, 'beats')
+            beatType = etree.SubElement(time, 'beat-type')
+            beats.text = str(nof_beats)
+            beatType.text = str(beat_type)
 
         #print(l_acc)
 
@@ -1008,7 +1012,7 @@ class symbtrscore(object):
 
 def singleFile():
     #fpath = 'txt/bestenigar--pesrev--fahte----tatyos_efendi.txt'
-    fpath = 'txt/acemkurdi--sarki--kapali_curcuna--zehretme_hayati--zeki_muren.txt'
+    fpath = 'txt/saba--miraciye--serbest--pes_heman--nayi_osman_dede.txt'
     print(fpath)
 
     piece = symbtrscore(fpath)
@@ -1075,14 +1079,14 @@ f = open('capitals.txt', 'w')
 for item in set(capitals):
     f.write(item.encode('utf8') + '\n')
 f.close()
-#'''
 
+'''
 #piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/buselik--agirsemai--aksaksemai--niyaz-i_nagme-i--comlekcizade_recep_celebi.txt')
 #piece = symbtrscore('C:/Users/Burak/Downloads/huseyni--turku--14_4--tutam_yar--erzurum.txt')
 #piece = symbtrscore('txt/huseyni--turku--14_4--tutam_yar--erzurum.txt')
 #piece.convertsymbtr2xml()
 
-'''
+''
 print(piece.l_notaAE, len(piece.l_notaAE))
 print(piece.l_nota, len(piece.l_nota))
 print(piece.sections)
