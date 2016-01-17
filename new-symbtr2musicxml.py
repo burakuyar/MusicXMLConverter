@@ -251,6 +251,7 @@ class symbtrscore(object):
         self.usul = ""
         self.name = ""
         self.composer = ""
+        self.lyricist = ""
         self.mu2header = dict()
         self.workmbid = []
         self.worklink = []
@@ -264,6 +265,7 @@ class symbtrscore(object):
         self.tempo = None
 
         self.tuplet = 0
+        self.tupletseq = []
 
         self.score = None
         self.sections = []
@@ -271,6 +273,7 @@ class symbtrscore(object):
         self.sectionsextracted = dict()
         self.capitals = []
         self.phraseboundaryinfo = 0
+        self.subdivisionthreshold = 0
 
         self.readsymbtr()   #read symbtr txt file
 
@@ -297,9 +300,11 @@ class symbtrscore(object):
         if mu2title == None:
             mu2title = self.mu2header['makam']['mu2_name'] + self.mu2header['usul']['mu2_name']
         mu2composer = self.mu2header['composer']['mu2_name']
+        mu2lyricist = self.mu2header['lyricist']['mu2_name']
 
         self.name = mu2title
         self.composer = mu2composer
+        self.lyricist = mu2lyricist
 
     def getworkmbid(self):
         with open('symbTr_mbid.json') as datafile:
@@ -504,6 +509,11 @@ class symbtrscore(object):
         global tuplet
         tuplet += 1
 
+        self.tupletseq.append(int(e.payda))
+        if tuplet > 1:
+            if self.tupletseq[-2] != self.tupletseq[-1]:
+                tuplet += 1
+
         time_mod = etree.SubElement(xmlnote, 'time-modification')
         act_note = etree.SubElement(time_mod, 'actual-notes')
         act_note.text = '3'
@@ -527,6 +537,8 @@ class symbtrscore(object):
             tupletstop.set('type', 'stop')
             #tupl.set('bracket', 'yes')
             tuplet = 0
+            print(self.tupletseq)
+            self.tupletseq = []
 
         return xmlnotat
 
@@ -686,6 +698,13 @@ class symbtrscore(object):
 
         #identification
         xmlidentification = etree.SubElement(self.score, 'identification')
+        xmlcomposer = etree.SubElement(xmlidentification, 'creator')
+        xmlcomposer.set('type', 'composer')
+        xmlcomposer.text = self.composer
+        xmllyricist = etree.SubElement(xmlidentification, 'creator')
+        xmllyricist.set('type', 'poet')
+        xmllyricist.text = self.lyricist
+
         for idlink in self.worklink:
             xmlrelation = etree.SubElement(xmlidentification, 'relation')
             xmlrelation.text = idlink
@@ -703,7 +722,7 @@ class symbtrscore(object):
 
         #measures array
         measure = []
-        i = 1       #measure counter
+        i = 1.0       #measure counter
         measureSum = 0
 
         #part1 measure1
@@ -736,6 +755,19 @@ class symbtrscore(object):
         if self.usul not in ['serbest', 'belirsiz']:
             nof_beats, beat_type = getUsul(self.usul, self.fpath)
             measureLength = nof_beats * nof_divs * (4 / float(beat_type))
+
+            if nof_beats >= 20:
+                if nof_beats % 4 == 0:
+                    self.subdivisionthreshold = measureLength / (nof_beats/4)
+                    print('a')
+                elif nof_beats % 2 == 0:
+                    self.subdivisionthreshold = measureLength / (nof_beats/2)
+                    print('b')
+                elif nof_beats % 3 == 0:
+                    self.subdivisionthreshold = measureLength / (nof_beats/3)
+                    print('c')
+            print(measureLength, self.subdivisionthreshold, nof_beats)
+
         else:
             nof_beats = ''
             beat_type = ''
@@ -928,13 +960,25 @@ class symbtrscore(object):
                 if measureSum >= measureLength:
                     #print(e.sira, i)
                     #print(measureSum, measureLength)
-                    i += 1
+                    i = int(i + 1)
                     measure.append(etree.SubElement(P1, 'measure'))
                     measure[-1].set('number', str(i))
                     tempatts = etree.SubElement(measure[-1], 'attributes')
                     measureSum = 0
                     tempmeasurehead = measure[-1]
                     #eof notes
+                elif measureSum % self.subdivisionthreshold == 0 and self.subdivisionthreshold != 0:
+                    #print(measureSum, measureLength)
+                    i += 0.01
+                    measure.append(etree.SubElement(P1, 'measure'))
+                    measure[-1].set('number', str(i))
+                    tempatts = etree.SubElement(measure[-1], 'attributes')
+
+                    xmlbarline = etree.SubElement(measure[-1], 'barline')
+                    xmlbarline.set('location', 'left')
+                    xmlbarstyle = etree.SubElement(xmlbarline, 'bar-style')
+                    xmlbarstyle.text = 'dashed'
+
             elif tempkod == '51':
                 #print('XX')
                 try:
@@ -1012,7 +1056,7 @@ class symbtrscore(object):
 
 def singleFile():
     #fpath = 'txt/bestenigar--pesrev--fahte----tatyos_efendi.txt'
-    fpath = 'txt/saba--miraciye--serbest--pes_heman--nayi_osman_dede.txt'
+    fpath = 'txt/hicaz--durak--durakevferi--allah_emrin--.txt'
     print(fpath)
 
     piece = symbtrscore(fpath)

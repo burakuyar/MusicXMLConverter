@@ -178,7 +178,11 @@ class note(object):
             temp_undotted = 1.0 / 64
 
         #check for tuplets
-        if temp_payPayda == 1.0 / 12:
+        if temp_payPayda == 1.0 / 6:
+            self.type = 'quarter'
+            temp_undotted = 1.0 / 6
+            self.tuplet = 1
+        elif temp_payPayda == 1.0 / 12:
             self.type = 'eighth'
             temp_undotted = 1.0 / 12
             self.tuplet = 1
