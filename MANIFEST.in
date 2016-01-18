@@ -1,0 +1,1 @@
+recursive-include musicxmlconverter/makams_usuls *.xml *.txt
