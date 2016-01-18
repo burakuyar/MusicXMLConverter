@@ -154,7 +154,7 @@ def getUsul(usul, file):
             except:
                 accents.append('')
 
-    f.close
+    f.close()
     #eof file read
     '''
 	print(usulID[usulID.index(usul)])
