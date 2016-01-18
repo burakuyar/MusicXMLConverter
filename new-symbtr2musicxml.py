@@ -377,14 +377,16 @@ class symbtrscore(object):
                 self.notes.append(symbtrnote.note(temp_line)) #NOTE CLASS
                 #print(vars(self.notes[-1]))
 
-                if self.notes[-1].pay in ['5']:            #seperating notes
+                if self.notes[-1].pay in ['5', '10']:            #seperating notes
                     temppay = int(self.notes[-1].pay)
                     #print("Note splitting:", temppay)
                     del self.notes[-1]
+                    firstpart = temppay * 2/5
+                    lastpart = temppay - firstpart
 
-                    temp_line[6] = str(temppay/2)
+                    temp_line[6] = str(firstpart)
                     self.notes.append(symbtrnote.note(temp_line))
-                    temp_line[6] = str(temppay/2+1)
+                    temp_line[6] = str(lastpart)
                     temp_line[11] = '_'
                     self.notes.append(symbtrnote.note(temp_line))
                 elif self.notes[-1].pay in ['9', '11']:
@@ -701,9 +703,10 @@ class symbtrscore(object):
         xmlcomposer = etree.SubElement(xmlidentification, 'creator')
         xmlcomposer.set('type', 'composer')
         xmlcomposer.text = self.composer
-        xmllyricist = etree.SubElement(xmlidentification, 'creator')
-        xmllyricist.set('type', 'poet')
-        xmllyricist.text = self.lyricist
+        if len(self.lyricist) > 0 :
+            xmllyricist = etree.SubElement(xmlidentification, 'creator')
+            xmllyricist.set('type', 'poet')
+            xmllyricist.text = self.lyricist
 
         for idlink in self.worklink:
             xmlrelation = etree.SubElement(xmlidentification, 'relation')
@@ -722,12 +725,14 @@ class symbtrscore(object):
 
         #measures array
         measure = []
-        i = 1.0       #measure counter
+        i = 1       #measure counter
         measureSum = 0
+        subdivisioncounter = 0
+        measuredelim = "-"
 
         #part1 measure1
         measure.append(etree.SubElement(P1, 'measure'))
-        measure[-1].set('number', str(i))
+        measure[-1].set('number', str(i) + measuredelim + str(subdivisioncounter))
 
         #1st measure direction: usul and makam info
         #						tempo(metronome)
@@ -960,18 +965,20 @@ class symbtrscore(object):
                 if measureSum >= measureLength:
                     #print(e.sira, i)
                     #print(measureSum, measureLength)
+                    subdivisioncounter = 0
                     i = int(i + 1)
                     measure.append(etree.SubElement(P1, 'measure'))
-                    measure[-1].set('number', str(i))
+                    measure[-1].set('number', str(i) + measuredelim + str(subdivisioncounter))
                     tempatts = etree.SubElement(measure[-1], 'attributes')
                     measureSum = 0
                     tempmeasurehead = measure[-1]
                     #eof notes
-                elif measureSum % self.subdivisionthreshold == 0 and self.subdivisionthreshold != 0:
+
+                elif self.subdivisionthreshold != 0 and measureSum % self.subdivisionthreshold == 0 and 0: #disabled temporarily
                     #print(measureSum, measureLength)
-                    i += 0.01
+                    subdivisioncounter += 1
                     measure.append(etree.SubElement(P1, 'measure'))
-                    measure[-1].set('number', str(i))
+                    measure[-1].set('number', str(i) + measuredelim + str(subdivisioncounter))
                     tempatts = etree.SubElement(measure[-1], 'attributes')
 
                     xmlbarline = etree.SubElement(measure[-1], 'barline')
@@ -1056,7 +1063,7 @@ class symbtrscore(object):
 
 def singleFile():
     #fpath = 'txt/bestenigar--pesrev--fahte----tatyos_efendi.txt'
-    fpath = 'txt/hicaz--durak--durakevferi--allah_emrin--.txt'
+    fpath = 'txt/suzinak_zirgule--sarki--kapali_curcuna--ayri_dustum--yesari_asim_arsoy.txt'
     print(fpath)
 
     piece = symbtrscore(fpath)
@@ -1066,7 +1073,7 @@ def singleFile():
     #print(piece.symbt2xmldict)
 
     #print(len(piece.notes))
-    #print(piece.sectionsextracted)
+    print(piece.sectionsextracted)
     #print(piece.sections)
 
 def multipleFiles():
