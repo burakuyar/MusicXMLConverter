@@ -311,8 +311,11 @@ class symbtrscore(object):
     def getworkmbid(self):
 
         jsonurl = "https://raw.githubusercontent.com/MTG/SymbTr/master/symbTr_mbid.json"
+        #the latest version of symbTr_mbid.json is being used. if your file is not found, there might be an error in the filename
+
         response = urllib.urlopen(jsonurl)
         data = json.loads(response.read())
+
         mbids = list()
         #print(data)
         for e in data:
@@ -320,7 +323,7 @@ class symbtrscore(object):
                 mbids.append(e['uuid']['mbid'])
 
         if len(mbids) == 0:
-            print("Mu2 file not found.")
+            print("SymbTr name is not found in the latest.")
             self.workmbid = "N/A"
         else:
             for id in mbids:
@@ -1067,7 +1070,7 @@ class symbtrscore(object):
 
 def singleFile():
     #fpath = 'txt/bestenigar--pesrev--fahte----tatyos_efendi.txt'
-    fpath = '../txt/suzinak_zirgule--sarki--kapali_curcuna--ayri_dustum--yesari_asim_arsoy.txt'
+    fpath = '../txt/suzinak_zirgule--sarki--kapali_curcuna--ayri_dustum--yesari_asim_arsoyy.txt'
     print(fpath)
 
     piece = symbtrscore(fpath)
