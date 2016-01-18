@@ -7,6 +7,7 @@ import copy
 import symbtrnote
 import getopt
 import sys
+import urllib
 from types import *
 from lxml import etree
 import json
@@ -201,7 +202,7 @@ def getKeySig(piecemakam, keysig):
 
     print(piecemakam)
 
-    makamTree = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'makams_usuls', 'Makamlar.xml')
+    makamTree = etree.parse(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'makams_usuls', 'Makamlar.xml'))
 
     xpression = '//dataroot/Makamlar[makam_adi= $makam]/'
     makam_ = piecemakam
@@ -308,25 +309,27 @@ class symbtrscore(object):
         self.lyricist = mu2lyricist
 
     def getworkmbid(self):
-        with open('symbTr_mbid.json') as datafile:
-            data = json.load(datafile)
-            mbids = list()
-            #print(data)
-            for e in data:
-                if e['name'] == self.fpath.replace('txt', '').replace('/', '').replace('.', ''):
-                    mbids.append(e['uuid']['mbid'])
 
-            if len(mbids) == 0:
-                print("Mu2 file not found.")
-                self.workmbid = "N/A"
-            else:
-                for id in mbids:
-                    self.workmbid.append(id)
+        jsonurl = "https://raw.githubusercontent.com/MTG/SymbTr/master/symbTr_mbid.json"
+        response = urllib.urlopen(jsonurl)
+        data = json.loads(response.read())
+        mbids = list()
+        #print(data)
+        for e in data:
+            if e['name'] == self.fpath.replace('txt', '').replace('/', '').replace('.', ''):
+                mbids.append(e['uuid']['mbid'])
 
-            for e in self.workmbid:
-                self.worklink.append("https://musicbrainz.org/work/" + e)
-            #print(self.workmbid)
-            #print(self.worklink)
+        if len(mbids) == 0:
+            print("Mu2 file not found.")
+            self.workmbid = "N/A"
+        else:
+            for id in mbids:
+                self.workmbid.append(id)
+
+        for e in self.workmbid:
+            self.worklink.append("https://musicbrainz.org/work/" + e)
+        #print(self.workmbid)
+        #print(self.worklink)
 
     def readsymbtr(self):
         finfo = self.fpath.split('/')[-1].split('--')
@@ -1064,7 +1067,7 @@ class symbtrscore(object):
 
 def singleFile():
     #fpath = 'txt/bestenigar--pesrev--fahte----tatyos_efendi.txt'
-    fpath = 'txt/suzinak_zirgule--sarki--kapali_curcuna--ayri_dustum--yesari_asim_arsoy.txt'
+    fpath = '../txt/suzinak_zirgule--sarki--kapali_curcuna--ayri_dustum--yesari_asim_arsoy.txt'
     print(fpath)
 
     piece = symbtrscore(fpath)
