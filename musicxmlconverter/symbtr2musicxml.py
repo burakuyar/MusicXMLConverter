@@ -109,7 +109,7 @@ def getNoteType(note, type, pay, payda, sira):
         #print(sira, temp_payPayda, '------------------')
 
 def getUsul(usul, file):
-    fpath = 'makams_usuls/usuls_v3_ANSI.txt'
+    fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'makams_usuls', 'usuls_v3_ANSI.txt')
 
     usulID = []
     usulName = []
@@ -201,7 +201,8 @@ def getKeySig(piecemakam, keysig):
 
     print(piecemakam)
 
-    makamTree = etree.parse('makams_usuls/Makamlar.xml')
+    makamTree = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'makams_usuls', 'Makamlar.xml')
+
     xpression = '//dataroot/Makamlar[makam_adi= $makam]/'
     makam_ = piecemakam
 
