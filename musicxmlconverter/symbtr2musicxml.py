@@ -980,8 +980,7 @@ class symbtrscore(object):
                     # print(cnt, endlineflag, measureSum)
 
                 # section information
-                if int(
-                        tempsira) in self.sectionsextracted.keys():  # instrumental pieces and pieces with section keywords
+                if int(tempsira) in self.sectionsextracted.keys():  # instrumental pieces and pieces with section keywords
                     # self.setsection(tempmeasurehead, xmllyric, templyric)
                     tempsection = self.sectionsextracted[int(tempsira)]
                     # print("extracted section", tempsira, tempsection)
