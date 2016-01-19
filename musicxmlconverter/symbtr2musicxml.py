@@ -391,7 +391,7 @@ class symbtrscore(object):
             else:
                 temp_line = temp_line.split('\t')
                 # print(temp_line)
-                self.notes.append(symbtrnote.note(temp_line))  # NOTE CLASS
+                self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))  # NOTE CLASS
                 # print(vars(self.notes[-1]))
 
                 if self.notes[-1].pay in ['51']:
@@ -403,28 +403,29 @@ class symbtrscore(object):
                         lastpart = temppay - firstpart
 
                         temp_line[6] = str(firstpart)
-                        self.notes.append(symbtrnote.note(temp_line))
+                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
                         temp_line[6] = str(lastpart)
                         temp_line[11] = '_'
-                        self.notes.append(symbtrnote.note(temp_line))
+                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
                     elif self.notes[-1].pay in ['9', '11']:
                         temppay = int(self.notes[-1].pay)
                         # print("Note splitting:", temppay)
                         del self.notes[-1]
 
                         temp_line[6] = str(3)
-                        self.notes.append(symbtrnote.note(temp_line))
+                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
                         temp_line[6] = str(temppay - 3)
                         temp_line[11] = '_'
-                        self.notes.append(symbtrnote.note(temp_line))
+                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
 
                 if self.notes[-1].rest == 1 and self.notes[-1].pay == '0':  # removing rests with 0 duration
-                    print("Warning! Note deleted. Rest with Pay:0. Sira:", self.notes[-1].sira)
+                    if self.verbose:
+                        print("Warning! Note deleted. Rest with Pay:0. Sira:", self.notes[-1].sira)
                     del self.notes[-1]
                 # DONE READING
 
                 lastnote = self.notes[-1]
-                if lastnote.graceerror == 1:
+                if lastnote.graceerror == 1 and self.verbose:
                     print("\tgrace error:", lastnote.sira, lastnote.kod, lastnote.pay, lastnote.payda)
                 # CHECK POINTS
                 """
@@ -523,7 +524,8 @@ class symbtrscore(object):
         # adding dots
         for i in range(0, e.dot):
             xmldot = etree.SubElement(xmlnote, 'dot')
-            # print("DOT ADDED", e.sira)
+            if self.verbose:
+                print("DOT ADDED", e.sira)
 
     def addtuplet(self, xmlnote, e):
         global tuplet
@@ -542,22 +544,23 @@ class symbtrscore(object):
 
         xmlnotat = etree.SubElement(xmlnote, 'notations')
         self.xmlnotationsflag = 1
-        print("Tuplet added.", tuplet, e.tuplet, e.sira)
+
+        if self.verbose:
+            print("Tuplet added.", tuplet, e.tuplet, e.sira)
         # check for tuplets
         if tuplet == 1:
-            # notat = etree.SubElement(xmlnote, 'notations')
             tupletstart = etree.SubElement(xmlnotat, 'tuplet')
             tupletstart.set('type', 'start')
             tupletstart.set('bracket', 'yes')
         elif tuplet == 2:
             pass
         elif tuplet == 3:
-            # notat = etree.SubElement(xmlnote, 'notations')
             tupletstop = etree.SubElement(xmlnotat, 'tuplet')
             tupletstop.set('type', 'stop')
             # tupl.set('bracket', 'yes')
             tuplet = 0
-            print(self.tupletseq)
+            if self.verbose:
+                print("Tuplet sequence:", self.tupletseq)
             self.tupletseq = []
 
         return xmlnotat
@@ -587,28 +590,32 @@ class symbtrscore(object):
         xmltremolo = etree.SubElement(xmlornaments, 'tremolo')
         xmltremolo.set('type', 'single')
         xmltremolo.text = "2"
-        print("Tremolo added.", e.sira, e.kod)
+        if self.verbose:
+            print("Tremolo added.", e.sira, e.kod)
 
     def addglissando(self, xmlnotations, e):
         if self.xmlglissandoflag == 1:
             xmlglissando = etree.SubElement(xmlnotations, 'glissando')
             xmlglissando.set('type', 'stop')
             self.xmlglissandoflag = 0
-            print("Glissando stop. Flag:", self.xmlglissandoflag, e.sira, e.kod, e.lyric)
+            if self.verbose:
+                print("Glissando stop. Flag:", self.xmlglissandoflag, e.sira, e.kod, e.lyric)
         if e.glissando == 1:
             xmlglissando = etree.SubElement(xmlnotations, 'glissando')
             xmlglissando.set('line-type', 'wavy')
             xmlglissando.set('type', 'start')
             self.xmlglissandoflag = 1
 
-            print("Glissando start. Flag:", self.xmlglissandoflag, e.sira, e.kod, e.lyric)
+            if self.verbose:
+                print("Glissando start. Flag:", self.xmlglissandoflag, e.sira, e.kod, e.lyric)
 
     def addtrill(self, xmlnotations, e):
         xmlornaments = etree.SubElement(xmlnotations, 'ornaments')
         xmltrill = etree.SubElement(xmlornaments, 'trill-mark')
         xmltrill.set('placement', 'above')
 
-        print("Trill added.", e.sira, e.kod)
+        if self.verbose:
+            print("Trill added.", e.sira, e.kod)
 
     def addgrace(self, xmlnote, e):
         grace = etree.SubElement(xmlnote, 'grace')  # note pitch XML create
@@ -626,7 +633,9 @@ class symbtrscore(object):
             xmlgraceslur = etree.SubElement(xmlnotations, 'slur')
             xmlgraceslur.set('type', 'stop')
             self.xmlgraceslurflag = 0
-        print("Grace slur flag:", self.xmlgraceslurflag)
+
+        if self.verbose:
+            print("Grace slur flag:", self.xmlgraceslurflag)
 
     def addmordent(self, xmlnotations, e):
         xmlornaments = etree.SubElement(xmlnotations, 'ornaments')
@@ -637,7 +646,8 @@ class symbtrscore(object):
             self.addlowermordent(xmlmordent)
             # pass
 
-        print("Mordent added.", e.sira, e.kod)
+        if self.verbose:
+            print("Mordent added.", e.sira, e.kod)
 
     def addinvertedmordent(self, xmlnotations, e):
         xmlornaments = etree.SubElement(xmlnotations, 'ornaments')
@@ -648,13 +658,15 @@ class symbtrscore(object):
             self.addlowermordent(xmlinvertedmordent)
             # pass
 
-        print("Inverted Mordent added.", e.sira, e.kod)
+        if self.verbose:
+            print("Inverted Mordent added.", e.sira, e.kod)
 
     def addgrupetto(self, xmlnotations, e):
         xmlornaments = etree.SubElement(xmlnotations, 'ornaments')
         xmlturn = etree.SubElement(xmlornaments, 'turn')
 
-        print("Grupetto added.", e.sira, e.kod)
+        if self.verbose:
+            print("Grupetto added.", e.sira, e.kod)
 
     def addlowermordent(self, xmlmordent):
         xmlmordent.set('approach', 'below')
@@ -697,7 +709,6 @@ class symbtrscore(object):
         global capitals
         if str.isupper():
             capitals.append(str)
-            # print str, "YO"
 
     def xmlconverter(self):
 
@@ -782,14 +793,13 @@ class symbtrscore(object):
             if nof_beats >= 20:
                 if nof_beats % 4 == 0:
                     self.subdivisionthreshold = measureLength / (nof_beats / 4)
-                    print('a')
                 elif nof_beats % 2 == 0:
                     self.subdivisionthreshold = measureLength / (nof_beats / 2)
-                    print('b')
                 elif nof_beats % 3 == 0:
                     self.subdivisionthreshold = measureLength / (nof_beats / 3)
-                    print('c')
-            print(measureLength, self.subdivisionthreshold, nof_beats)
+
+            if self.verbose:
+                print("After long usul check:", measureLength, self.subdivisionthreshold, nof_beats)
 
         else:
             nof_beats = ''
@@ -892,23 +902,17 @@ class symbtrscore(object):
                     xmltype.text = e.type
                     self.adddot(xmlnote, e)
                     # print(e.sira, e.type)
-                    # timemodflag = getNoteType(xmlnote, xmltype, temppay, temppayda, tempsira)
 
                 if e.rest == 0:
                     step = etree.SubElement(pitch, 'step')  # note pitch step XML create
                     step.text = tempstep  # step val #XML assign
 
-                    # accidental = etree.SubElement(note, 'accidental')  #accidental XML create
                     self.addaccidental(xmlnote, pitch, e)
                     # accidental.text = tempacc
 
                     octave = etree.SubElement(pitch, 'octave')  # note pitch octave XML create
                     octave.text = tempoct  # octave val XML assign
 
-                """ old time modification
-                if timemodflag == 1:
-                    self.addtimemodification(xmlnote)
-                """
                 if e.tuplet == 1:
                     outkoddict['9'] += 1
                     # print("tuplet var! xmlconverter func")
@@ -916,42 +920,50 @@ class symbtrscore(object):
                     xmlnotations = self.addtuplet(xmlnote, e)
                     # print("NOTATFLAG:", self.xmlnotationsflag)
                     if e.tremolo == 1 or e.glissando == 1:
-                        print("XXXXXXXXXXXXXX")
+                        if self.verbose:
+                            print("Tuplet with tremolo or glissando.")
                 if e.tremolo == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        print("Notations is added for tremolo.")
+                        if self.verbose:
+                            print("Notations is added for tremolo.")
                     self.addtremolo(xmlnotations, e)
                 if e.glissando == 1 or self.xmlglissandoflag == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        print("Notations is added for glissando.")
+                        if self.verbose:
+                            print("Notations is added for glissando.")
                     self.addglissando(xmlnotations, e)
                 if e.trill == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        print("Notations is added for trill.")
+                        if self.verbose:
+                            print("Notations is added for trill.")
                     self.addtrill(xmlnotations, e)
                 if e.mordent == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        print("Notations is added for mordent.")
+                        if self.verbose:
+                            print("Notations is added for mordent.")
                     self.addmordent(xmlnotations, e)
                 if e.invertedmordent == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        print("Notations is added for inverted mordent.", e.sira, e.kod, e.invertedmordent)
+                        if self.verbose:
+                            print("Notations is added for inverted mordent.", e.sira, e.kod, e.invertedmordent)
                     self.addinvertedmordent(xmlnotations, e)
                 if e.grupetto == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        print("Notations is added for grupetto/turn.", e.sira, e.kod, e.invertedmordent)
+                        if self.verbose:
+                            print("Notations is added for grupetto/turn.", e.sira, e.kod, e.invertedmordent)
                     self.addgrupetto(xmlnotations, e)
 
                 if self.xmlgraceslurflag > 0 and 0:  # disabled temporarily
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        print("Notations is added for grace.")
+                        if self.verbose:
+                            print("Notations is added for grace.")
                     self.addgraceslur(xmlnotations, e)
 
                 # LYRICS PART
@@ -1012,12 +1024,15 @@ class symbtrscore(object):
                 try:
                     measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
                 except:
-                    print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
+                    if self.verbose:
+                        print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
             elif tempkod == '50':
-                print("makam change", self.txtpath, tempsira)
+                if self.verbose:
+                    print("makam change", self.txtpath, tempsira)
             # print(measure)
             elif tempkod == '35':
-                # print("Measure repetition.", e.sira)
+                if self.verbose:
+                    print("Measure repetition.", e.sira)
                 P1.remove(measure[-1])  # remove empty measure
                 del measure[-1]
 
@@ -1028,6 +1043,7 @@ class symbtrscore(object):
                 if xmeasure.find('attributes') is not None:
                     tempatts = xmeasure.find('attributes')
                     tempatts.clear()
+                #this part will be active after musescore supports measure repetation
                 # xmlmeasurestyle = etree.SubElement(tempatts, 'measure-style')
                 # xmlmeasurerepeat = etree.SubElement(xmlmeasurestyle, 'measure-repeat')
                 # xmlmeasurerepeat.set('type', 'start')
@@ -1140,7 +1156,8 @@ if sys.argv[1] == '1':
 elif sys.argv[1] == '2':
     multipleFiles()
 else:
-    print("No arguments.")
+    pass
+    #print("No arguments.")
 
 errLog.write('\n'.join(set(missingUsuls)))
 errLog.write('\n' + str(len(set(missingUsuls))))

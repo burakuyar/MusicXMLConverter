@@ -22,7 +22,7 @@ altervalues = {'quarter-flat' : "-0.5", 'slash-flat': None, 'flat' : '-1', 'doub
 sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME", u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM", u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM", u"TERENNÜM"]
 
 class note(object):
-    def __init__(self, info):
+    def __init__(self, info, verbose=None):
         #BASE ATTRIBUTES
         self.sira = None
         self.kod = None
@@ -71,6 +71,9 @@ class note(object):
 
         self.graceerror = 0
 
+        if verbose == None:
+            verbose = False
+        self.verbose = verbose
         self.fetchsymbtrinfo(info)
 
     def fetchsymbtrinfo(self, info):
@@ -94,7 +97,10 @@ class note(object):
             self.getGrace()
             if self.grace == 1 and self.pay != '0':
                 self.graceerror = 1
-                #print("Warning: GraceError! pay and payda has been changed.", self.sira, self.kod, self.pay)
+
+                if self.verbose:
+                    print("Warning: GraceError! pay and payda has been changed.", self.sira, self.kod, self.pay)
+
                 self.pay = '0'
                 self.payda = '0'
             if self.rest == 0:
@@ -146,7 +152,8 @@ class note(object):
             self.step = self.notaAE[0]
             self.octave = self.notaAE[1]
         except:
-            print(self.sira, self.notaAE, "getPitch error")
+            if self.verbose:
+                print(self.sira, self.notaAE, "getPitch error")
             sys.exit(1)
 
     def getNoteType(self):
