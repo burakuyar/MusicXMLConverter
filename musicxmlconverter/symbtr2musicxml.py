@@ -46,7 +46,7 @@ printflag = 0
 tuplet = 0
 capitals = []
 
-errLog = open('errLog.txt', 'w')
+#errLog = open('errLog.txt', 'w')
 missingUsuls = []
 
 
@@ -1092,23 +1092,11 @@ class symbtrscore(object):
         f.write(self.getxmlstr())
         f.close()
 
-errLog.write('\n'.join(set(missingUsuls)))
-errLog.write('\n' + str(len(set(missingUsuls))))
-errLog.close()
+#errLog.write('\n'.join(set(missingUsuls)))
+#errLog.write('\n' + str(len(set(missingUsuls))))
+#errLog.close()
 
-f = open('capitals.txt', 'w')
-for item in set(capitals):
-    f.write(item.encode('utf8') + '\n')
-f.close()
-
-'''
-#piece = symbtrscore('C:/Users/Burak/Desktop/CompMusic/git-symbtr/SymbTr/txt/buselik--agirsemai--aksaksemai--niyaz-i_nagme-i--comlekcizade_recep_celebi.txt')
-#piece = symbtrscore('C:/Users/Burak/Downloads/huseyni--turku--14_4--tutam_yar--erzurum.txt')
-#piece = symbtrscore('txt/huseyni--turku--14_4--tutam_yar--erzurum.txt')
-#piece.convertsymbtr2xml()
-
-''
-print(piece.l_notaAE, len(piece.l_notaAE))
-print(piece.l_nota, len(piece.l_nota))
-print(piece.sections)
-'''
+#f = open('capitals.txt', 'w')
+#for item in set(capitals):
+#    f.write(item.encode('utf8') + '\n')
+#f.close()
