@@ -94,7 +94,7 @@ class note(object):
             self.getGrace()
             if self.grace == 1 and self.pay != '0':
                 self.graceerror = 1
-                print("Warning: GraceError! pay and payda has been changed.", self.sira, self.kod, self.pay)
+                #print("Warning: GraceError! pay and payda has been changed.", self.sira, self.kod, self.pay)
                 self.pay = '0'
                 self.payda = '0'
             if self.rest == 0:
