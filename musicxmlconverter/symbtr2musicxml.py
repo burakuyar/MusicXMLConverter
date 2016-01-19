@@ -1008,11 +1008,16 @@ class symbtrscore(object):
 
             elif tempkod == '51':
                 # print('XX')
-                try:
-                    measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
-                except:
+                if e.sira == '1':
                     if self.verbose:
-                        print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
+                        print("Initial usul is already set.")
+                else:
+                    try:
+                        measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
+                    except:
+                        if self.verbose:
+                            print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
+
             elif tempkod == '50':
                 if self.verbose:
                     print("makam change", self.txtpath, tempsira)
