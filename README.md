@@ -23,3 +23,19 @@ xmlstr = piece.convertsymbtr2xml()  # outputs the xml score as string
 piece.writexml(outpath)  # you can also save the score to a file after calling the conversion method above
 ```
 
+##Installation
+
+If you want to install musicxmlconverter, it is recommended to install musicxmlconverter and dependencies into a virtualenv. In the terminal, do the following:
+```
+virtualenv env
+source env/bin/activate
+python setup.py install
+```
+If you want to be able to edit files and have the changes be reflected, then install musicxmlconverter like this instead
+```
+pip install -e .
+```
+Now you can install the rest of the dependencies:
+```
+pip install -r requirements
+```
