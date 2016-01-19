@@ -1,4 +1,4 @@
-import numpy
+numpy
 lxml
 symbtrdataextractor
 git+https://github.com/sertansenturk/symbtrdataextractor.git
