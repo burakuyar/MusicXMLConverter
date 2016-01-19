@@ -245,9 +245,12 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, fpath, mu2path):
+    def __init__(self, fpath, mu2path, symbtrname=''):
         self.fpath = fpath
         self.mu2path = mu2path
+
+        if not symbtrname:
+            self.symbtrname = os.path.splitext(os.path.basename(self.fpath))[0]
 
         #piece attributes
         self.makam = ""
@@ -294,8 +297,9 @@ class symbtrscore(object):
             print(vars(e))
 
     def sectionextractor(self):
-        data, isDataValid = extractor.extract(self.fpath, extract_all_labels=True, print_warnings=False)
-        self.mu2header, headerRow, isHederValid = symbtrreader.readMu2Header(self.mu2path)
+        data, isDataValid = extractor.extract(self.fpath, symbtrname=self.symbtrname, 
+            extract_all_labels=True, print_warnings=False)
+        self.mu2header, headerRow, isHeaderValid = symbtrreader.readMu2Header(self.mu2path)
         #data = extractor.merge(txtdata, Mu2header)
         for item in data['sections']:
             self.sectionsextracted[item['startNote']] = item['name']
@@ -318,9 +322,6 @@ class symbtrscore(object):
         response = urllib.urlopen(jsonurl)
         data = json.loads(response.read())
 
-        import pdb
-        pdb.set_trace()
-
         mbids = list()
         #print(data)
         for e in data:
@@ -340,7 +341,7 @@ class symbtrscore(object):
         #print(self.worklink)
 
     def readsymbtr(self):
-        finfo = self.fpath.split('/')[-1].split('--')
+        finfo = self.symbtrname.split('--')
         finfo[-1] = finfo[-1][:-4]
 
         self.makam = finfo[0]
