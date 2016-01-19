@@ -390,7 +390,7 @@ class symbtrscore(object):
                 self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))  # NOTE CLASS
                 # print(vars(self.notes[-1]))
 
-                if self.notes[-1].pay in ['51']:
+                if self.notes[-1].kod not in ['51']:
                     if self.notes[-1].pay in ['5', '10']:  # seperating notes
                         temppay = int(self.notes[-1].pay)
                         # print("Note splitting:", temppay)
