@@ -323,8 +323,11 @@ class symbtrscore(object):
         if mu2title is None:
             mu2title = self.mu2header['makam']['mu2_name'] + self.mu2header['usul']['mu2_name']
 
-        self.mu2composer = self.mu2header['composer']['mu2_name']
-        self.mu2lyricist = self.mu2header['lyricist']['mu2_name']
+        mu2composer = self.mu2header['composer']['mu2_name']
+        mu2lyricist = self.mu2header['lyricist']['mu2_name']
+
+        self.mu2composer = mu2composer
+        self.mu2lyricist = mu2lyricist
         self.mu2beatnumber = self.mu2header['usul']['number_of_pulses']
         self.mu2beattype = self.mu2header['usul']['mertebe']
         self.name = mu2title
@@ -725,11 +728,11 @@ class symbtrscore(object):
         xmlidentification = etree.SubElement(self.score, 'identification')
         xmlcomposer = etree.SubElement(xmlidentification, 'creator')
         xmlcomposer.set('type', 'composer')
-        xmlcomposer.text = self.composer
-        if len(self.lyricist) > 0:
+        xmlcomposer.text = self.mu2composer
+        if len(self.mu2lyricist) > 0:
             xmllyricist = etree.SubElement(xmlidentification, 'creator')
             xmllyricist.set('type', 'poet')
-            xmllyricist.text = self.lyricist
+            xmllyricist.text = self.mu2lyricist
 
         for idlink in self.mblink:
             xmlrelation = etree.SubElement(xmlidentification, 'relation')
