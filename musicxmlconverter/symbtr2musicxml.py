@@ -209,8 +209,7 @@ def getAccName(alter):
 
 
 def getKeySig(piecemakam, keysig):
-    print(piecemakam)
-
+    #print(piecemakam)
     makamTree = etree.parse(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'makams_usuls', 'Makamlar.xml'))
 
     xpression = '//dataroot/Makamlar[makam_adi= $makam]/'
@@ -1090,7 +1089,10 @@ class symbtrscore(object):
                                doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">'))
         f.close()
 
-    def convertsymbtr2xml(self):
+    def convertsymbtr2xml(self, verbose=None):
+        if verbose == None:
+            verbose = False
+        self.verbose = verbose
         # self.readsymbtr()
         self.xmlconverter()
         self.writexml()
