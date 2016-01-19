@@ -1092,53 +1092,6 @@ class symbtrscore(object):
         f.write(self.getxmlstr())
         f.close()
 
-def multipleFiles():
-    errorFiles = []
-    totalFiles = 0
-    cnvFiles = 0
-    errFiles = 0
-
-    for file in os.listdir('./txt'):
-        if fnmatch.fnmatch(file, '*.txt') and file != 'errLog.txt' and file != 'errorFiles.txt':
-            print(file)
-
-            '''
-            #---debugging
-            piece = symbtrscore("txt/" + file)
-            piece.convertsymbtr2xml()
-            #'''
-
-            totalFiles += 1
-            # '''
-            try:
-                piece = symbtrscore("txt/" + file)
-                piece.convertsymbtr2xml()
-                cnvFiles += 1
-            except:
-                errorFiles.append(file)
-                errFiles += 1
-                # '''
-
-            print(totalFiles, cnvFiles, errFiles)
-    f = open('errorFiles.txt', 'w')
-    for item in errorFiles:
-        f.write(item + '\n')
-    f.close()
-    print('Total files: ', totalFiles)
-    print('Converted: ', cnvFiles)
-    print('Failed: ', errFiles)
-    print('Usul Conflict: ', len(set(missingUsuls)))
-
-# '''
-# main
-if sys.argv[1] == '1':
-    singleFile()
-elif sys.argv[1] == '2':
-    multipleFiles()
-else:
-    pass
-    #print("No arguments.")
-
 errLog.write('\n'.join(set(missingUsuls)))
 errLog.write('\n' + str(len(set(missingUsuls))))
 errLog.close()
