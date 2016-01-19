@@ -253,7 +253,7 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', outpath='', verbose=None):
+    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', verbose=None):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
         self.mbid = mbid  # musicbrainz unique identifier
@@ -268,11 +268,6 @@ class symbtrscore(object):
             self.symbtrname = os.path.splitext(os.path.basename(self.txtpath))[0]
         else:
             self.symbtrname = symbtrname
-
-        if not outpath:
-            self.outpath = os.path.split(self.txtpath)[0] + '.xml'
-        else:
-            self.outpath = outpath
 
         # piece attributes
         self.makam = ""
@@ -1082,11 +1077,14 @@ class symbtrscore(object):
                 xmlfeature = etree.SubElement(xmlgrouping, 'feature')
                 xmlfeature.set('type', 'flavor')
 
-    def writexml(self):
+    def getxmlstr(self): 
+        return etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False,
+            doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">')
+
+    def writexml(self, outpath):
         # printing xml file
-        f = open(self.outpath[:-4] + '.xml', 'wb')
-        f.write(etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False,
-                               doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">'))
+        f = open(outpath, 'wb')
+        f.write(self.getxmlstr())
         f.close()
 
     def convertsymbtr2xml(self, verbose=None):
@@ -1095,8 +1093,8 @@ class symbtrscore(object):
         self.verbose = verbose
         # self.readsymbtr()
         self.xmlconverter()
-        self.writexml()
 
+        return self.getxmlstr()
 
 def singleFile():
     # fpath = 'txt/bestenigar--pesrev--fahte----tatyos_efendi.txt'
