@@ -252,16 +252,12 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', verbose=None):
+    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', verbose=False):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
         self.mbid = mbid  # musicbrainz unique identifier
 
-        if verbose == None:
-            verbose = False
         self.verbose = verbose
-
-        #print(self.verbose, verbose)
 
         if not symbtrname:
             self.symbtrname = os.path.splitext(os.path.basename(self.txtpath))[0]
@@ -703,7 +699,7 @@ class symbtrscore(object):
         if str.isupper():
             capitals.append(str)
 
-    def convertsymbtr2xml(self, verbose=False):
+    def convertsymbtr2xml(self):
         outkoddict = dict((e, 0) for e in kodlist)
         global tuplet
         tuplet = 0
