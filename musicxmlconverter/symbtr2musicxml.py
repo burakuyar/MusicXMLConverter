@@ -252,7 +252,7 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', verbose=False):
+    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', verbose=None):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
         self.mbid = mbid  # musicbrainz unique identifier
@@ -699,7 +699,7 @@ class symbtrscore(object):
         if str.isupper():
             capitals.append(str)
 
-    def convertsymbtr2xml(self):
+    def convertsymbtr2xml(self, verbose=None):
         outkoddict = dict((e, 0) for e in kodlist)
         global tuplet
         tuplet = 0
@@ -785,7 +785,7 @@ class symbtrscore(object):
                 elif nof_beats % 3 == 0:
                     self.subdivisionthreshold = measureLength / (nof_beats / 3)
 
-            if self.verbose:
+            if self.verbose or verbose:
                 print("After long usul check:", measureLength, self.subdivisionthreshold, nof_beats)
 
         else:
@@ -907,49 +907,49 @@ class symbtrscore(object):
                     xmlnotations = self.addtuplet(xmlnote, e)
                     # print("NOTATFLAG:", self.xmlnotationsflag)
                     if e.tremolo == 1 or e.glissando == 1:
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Tuplet with tremolo or glissando.")
                 if e.tremolo == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Notations is added for tremolo.")
                     self.addtremolo(xmlnotations, e)
                 if e.glissando == 1 or self.xmlglissandoflag == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Notations is added for glissando.")
                     self.addglissando(xmlnotations, e)
                 if e.trill == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Notations is added for trill.")
                     self.addtrill(xmlnotations, e)
                 if e.mordent == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Notations is added for mordent.")
                     self.addmordent(xmlnotations, e)
                 if e.invertedmordent == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Notations is added for inverted mordent.", e.sira, e.kod, e.invertedmordent)
                     self.addinvertedmordent(xmlnotations, e)
                 if e.grupetto == 1:
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Notations is added for grupetto/turn.", e.sira, e.kod, e.invertedmordent)
                     self.addgrupetto(xmlnotations, e)
 
                 if self.xmlgraceslurflag > 0 and 0:  # disabled temporarily
                     if not xmlnote.find('notations'):
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print("Notations is added for grace.")
                     self.addgraceslur(xmlnotations, e)
 
@@ -1009,21 +1009,21 @@ class symbtrscore(object):
             elif tempkod == '51':
                 # print('XX')
                 if e.sira == '1':
-                    if self.verbose:
+                    if self.verbose or verbose:
                         print("Initial usul is already set.")
                 else:
                     try:
                         measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
                     except:
-                        if self.verbose:
+                        if self.verbose or verbose:
                             print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
 
             elif tempkod == '50':
-                if self.verbose:
+                if self.verbose or verbose:
                     print("makam change", self.txtpath, tempsira)
             # print(measure)
             elif tempkod == '35':
-                if self.verbose:
+                if self.verbose or verbose:
                     print("Measure repetition.", e.sira)
                 P1.remove(measure[-1])  # remove empty measure
                 del measure[-1]
