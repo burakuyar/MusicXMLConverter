@@ -41,7 +41,6 @@ sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TES
 kodlist = []
 koddict = dict()
 
-outkoddict = dict()
 printflag = 0
 
 tuplet = 0
@@ -704,9 +703,7 @@ class symbtrscore(object):
         if str.isupper():
             capitals.append(str)
 
-    def xmlconverter(self):
-
-        global outkoddict
+    def convertsymbtr2xml(self, verbose=False):
         outkoddict = dict((e, 0) for e in kodlist)
         global tuplet
         tuplet = 0
@@ -1076,6 +1073,8 @@ class symbtrscore(object):
                 xmlgrouping.set('type', 'stop')
                 xmlfeature = etree.SubElement(xmlgrouping, 'feature')
                 xmlfeature.set('type', 'flavor')
+        
+        return self.getxmlstr()
 
     def getxmlstr(self): 
         return etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False,
@@ -1086,31 +1085,6 @@ class symbtrscore(object):
         f = open(outpath, 'wb')
         f.write(self.getxmlstr())
         f.close()
-
-    def convertsymbtr2xml(self, verbose=None):
-        if verbose == None:
-            verbose = False
-        self.verbose = verbose
-        # self.readsymbtr()
-        self.xmlconverter()
-
-        return self.getxmlstr()
-
-def singleFile():
-    # fpath = 'txt/bestenigar--pesrev--fahte----tatyos_efendi.txt'
-    fpath = '../txt/suzinak_zirgule--sarki--kapali_curcuna--ayri_dustum--yesari_asim_arsoyy.txt'
-    print(fpath)
-
-    piece = symbtrscore(fpath, verbose=True)
-    # print(piece.printnotes())
-    piece.convertsymbtr2xml()
-    print(piece.phraseboundaryinfo)
-    # print(piece.symbt2xmldict)
-
-    # print(len(piece.notes))
-    print(piece.sectionsextracted)
-    # print(piece.sections)
-
 
 def multipleFiles():
     errorFiles = []
