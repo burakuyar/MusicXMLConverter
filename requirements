@@ -1,0 +1,5 @@
+# -*- coding: utf-8 -*-
+import numpy
+lxml
+symbtrdataextractor
+git+https://github.com/sertansenturk/symbtrdataextractor.git
