@@ -245,8 +245,10 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, fpath):
+    def __init__(self, fpath, mu2path):
         self.fpath = fpath
+        self.mu2path = mu2path
+
         #piece attributes
         self.makam = ""
         self.form = ""
@@ -293,7 +295,7 @@ class symbtrscore(object):
 
     def sectionextractor(self):
         data, isDataValid = extractor.extract(self.fpath, extract_all_labels=True, print_warnings=False)
-        self.mu2header, headerRow, isHederValid = symbtrreader.readMu2Header(self.fpath.replace('txt', 'mu2'))
+        self.mu2header, headerRow, isHederValid = symbtrreader.readMu2Header(self.mu2path)
         #data = extractor.merge(txtdata, Mu2header)
         for item in data['sections']:
             self.sectionsextracted[item['startNote']] = item['name']
@@ -315,6 +317,9 @@ class symbtrscore(object):
 
         response = urllib.urlopen(jsonurl)
         data = json.loads(response.read())
+
+        import pdb
+        pdb.set_trace()
 
         mbids = list()
         #print(data)
