@@ -328,10 +328,10 @@ class symbtrscore(object):
     def addmbidlink(self):
         if self.mbid:
             try:  # single dict
-                self.mblink.append("https://musicbrainz.org/" + self.mbid['type'] + self.mbid['mbid'])
+                self.mblink.append("https://musicbrainz.org/" + self.mbid['type'] + '/' + self.mbid['mbid'])
             except TypeError:  # list
                 for mbid in self.mbid:
-                    self.mblink.append("https://musicbrainz.org/" + mbid['type'] + mbid['mbid'])
+                    self.mblink.append("https://musicbrainz.org/" + mbid['type'] + '/' + mbid['mbid'])
 
     def readsymbtr(self):
         finfo = self.symbtrname.split('--')
