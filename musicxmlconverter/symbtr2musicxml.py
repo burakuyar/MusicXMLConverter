@@ -318,7 +318,7 @@ class symbtrscore(object):
             self.sectionsextracted[item['startNote']] = item['name']
         # print(self.mu2header)
         mu2title = self.mu2header['title']['mu2_title']
-        if mu2title == None:
+        if mu2title is None:
             mu2title = self.mu2header['makam']['mu2_name'] + self.mu2header['usul']['mu2_name']
         mu2composer = self.mu2header['composer']['mu2_name']
         mu2lyricist = self.mu2header['lyricist']['mu2_name']
