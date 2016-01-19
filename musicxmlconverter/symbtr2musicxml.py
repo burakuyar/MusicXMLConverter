@@ -245,7 +245,7 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, txtpath, mu2path, symbtrname='', mbid=''):
+    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', outpath=''):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
         self.mbid = mbid  # musicbrainz unique identifier
@@ -254,6 +254,11 @@ class symbtrscore(object):
             self.symbtrname = os.path.splitext(os.path.basename(self.txtpath))[0]
         else:
             self.symbtrname = symbtrname
+
+        if not outpath:
+            self.outpath = os.path.split(self.txtpath)[0] + '.xml'
+        else:
+            self.outpath = outpath
 
         #piece attributes
         self.makam = ""
@@ -323,7 +328,7 @@ class symbtrscore(object):
             except TypeError:  # list
                 for mbid in self.mbid:
                     self.mblink.append("https://musicbrainz.org/" + mbid['type'] + mbid['mbid'])
-                    
+
     def readsymbtr(self):
         finfo = self.symbtrname.split('--')
         finfo[-1] = finfo[-1][:-4]
@@ -434,7 +439,7 @@ class symbtrscore(object):
         #print("Kods used:", kodlist)
         #print("Koddict:", koddict)
 
-        f.close
+        f.close()
         #eof file read
         #print ('sumlinelength:')
         #print(sumlinelength)
@@ -1045,13 +1050,10 @@ class symbtrscore(object):
 
     def writexml(self):
         #printing xml file
-        outpath = self.txtpath.replace("txt", "xml")
-        #print(etree.tostring(self.score))
-        #print(outpath)
-        f = open(outpath[:-4] + '.xml', 'wb')
+        f = open(self.outpath[:-4] + '.xml', 'wb')
         f.write(etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False ,
                                doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">'))
-        f.close
+        f.close()
 
     def convertsymbtr2xml(self):
         #self.readsymbtr()
@@ -1104,7 +1106,7 @@ def multipleFiles():
     f = open('errorFiles.txt', 'w')
     for item in errorFiles:
         f.write(item + '\n')
-    f.close
+    f.close()
     print('Total files: ', totalFiles)
     print('Converted: ', cnvFiles)
     print('Failed: ', errFiles)
