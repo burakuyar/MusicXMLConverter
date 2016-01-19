@@ -379,28 +379,29 @@ class symbtrscore(object):
                 self.notes.append(symbtrnote.note(temp_line)) #NOTE CLASS
                 #print(vars(self.notes[-1]))
 
-                if self.notes[-1].pay in ['5', '10']:            #seperating notes
-                    temppay = int(self.notes[-1].pay)
-                    #print("Note splitting:", temppay)
-                    del self.notes[-1]
-                    firstpart = temppay * 2/5
-                    lastpart = temppay - firstpart
+                if self.notes[-1].pay in ['51']:
+                    if self.notes[-1].pay in ['5', '10']:            #seperating notes
+                        temppay = int(self.notes[-1].pay)
+                        #print("Note splitting:", temppay)
+                        del self.notes[-1]
+                        firstpart = temppay * 2/5
+                        lastpart = temppay - firstpart
 
-                    temp_line[6] = str(firstpart)
-                    self.notes.append(symbtrnote.note(temp_line))
-                    temp_line[6] = str(lastpart)
-                    temp_line[11] = '_'
-                    self.notes.append(symbtrnote.note(temp_line))
-                elif self.notes[-1].pay in ['9', '11']:
-                    temppay = int(self.notes[-1].pay)
-                    #print("Note splitting:", temppay)
-                    del self.notes[-1]
+                        temp_line[6] = str(firstpart)
+                        self.notes.append(symbtrnote.note(temp_line))
+                        temp_line[6] = str(lastpart)
+                        temp_line[11] = '_'
+                        self.notes.append(symbtrnote.note(temp_line))
+                    elif self.notes[-1].pay in ['9', '11']:
+                        temppay = int(self.notes[-1].pay)
+                        #print("Note splitting:", temppay)
+                        del self.notes[-1]
 
-                    temp_line[6] = str(3)
-                    self.notes.append(symbtrnote.note(temp_line))
-                    temp_line[6] = str(temppay - 3)
-                    temp_line[11] = '_'
-                    self.notes.append(symbtrnote.note(temp_line))
+                        temp_line[6] = str(3)
+                        self.notes.append(symbtrnote.note(temp_line))
+                        temp_line[6] = str(temppay - 3)
+                        temp_line[11] = '_'
+                        self.notes.append(symbtrnote.note(temp_line))
 
                 if self.notes[-1].rest == 1 and self.notes[-1].pay == '0':  #removing rests with 0 duration
                     print("Warning! Note deleted. Rest with Pay:0. Sira:", self.notes[-1].sira)
@@ -993,7 +994,7 @@ class symbtrscore(object):
                 try:
                     measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
                 except:
-                    print('Kod', tempkod, 'but no time information.', e.sira)
+                    print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
             elif tempkod == '50':
                 print("makam change", self.txtpath, tempsira)
             #print(measure)
