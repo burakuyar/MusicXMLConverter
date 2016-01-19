@@ -245,12 +245,12 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, fpath, mu2path, symbtrname=''):
-        self.fpath = fpath
+    def __init__(self, txtpath, mu2path, symbtrname=''):
+        self.txtpath = txtpath
         self.mu2path = mu2path
 
         if not symbtrname:
-            self.symbtrname = os.path.splitext(os.path.basename(self.fpath))[0]
+            self.symbtrname = os.path.splitext(os.path.basename(self.txtpath))[0]
 
         #piece attributes
         self.makam = ""
@@ -297,7 +297,7 @@ class symbtrscore(object):
             print(vars(e))
 
     def sectionextractor(self):
-        data, isDataValid = extractor.extract(self.fpath, symbtrname=self.symbtrname, 
+        data, isDataValid = extractor.extract(self.txtpath, symbtrname=self.symbtrname, 
             extract_all_labels=True, print_warnings=False)
         self.mu2header, headerRow, isHeaderValid = symbtrreader.readMu2Header(self.mu2path)
         #data = extractor.merge(txtdata, Mu2header)
@@ -325,7 +325,7 @@ class symbtrscore(object):
         mbids = list()
         #print(data)
         for e in data:
-            if e['name'] == self.fpath.replace('txt', '').replace('/', '').replace('.', ''):
+            if e['name'] == self.txtpath.replace('txt', '').replace('/', '').replace('.', ''):
                 mbids.append(e['uuid']['mbid'])
 
         if len(mbids) == 0:
@@ -373,7 +373,7 @@ class symbtrscore(object):
     def readsymbtrlines(self):
         global kodlist, koddict
 
-        f = open(self.fpath)
+        f = open(self.txtpath)
         i = 0
         sumlinelength = 0
         temp_line = f.readline()
@@ -431,9 +431,9 @@ class symbtrscore(object):
                     print("Dot", lastnote.dot, lastnote.sira)
                 if lastnote.tuplet > 0:
                     print("Tuplet", lastnote.tuplet, lastnote.sira)
-                    #print(self.fpath, "note time", temppay, self.l_pay[-1], self.l_pay[-2], self.l_sira[-1], "AAAAAAAAAAAAAAAA")
+                    #print(self.txtpath, "note time", temppay, self.l_pay[-1], self.l_pay[-2], self.l_sira[-1], "AAAAAAAAAAAAAAAA")
                 if lastnote.pay == '0' and lastnote.kod != '8':
-                    print("DURATION ERROR:", self.fpath, lastnote.sira, lastnote.kod, lastnote.pay)
+                    print("DURATION ERROR:", self.txtpath, lastnote.sira, lastnote.kod, lastnote.pay)
                 """
 
                 if lastnote.kod in koddict:
@@ -771,7 +771,7 @@ class symbtrscore(object):
         nof_beats = 4  #4
         beat_type = 4  #4
         if self.usul not in ['serbest', 'belirsiz']:
-            nof_beats, beat_type = getUsul(self.usul, self.fpath)
+            nof_beats, beat_type = getUsul(self.usul, self.txtpath)
             measureLength = nof_beats * nof_divs * (4 / float(beat_type))
 
             if nof_beats >= 20:
@@ -1006,7 +1006,7 @@ class symbtrscore(object):
                 except:
                     print('Kod', tempkod, 'but no time information.', e.sira)
             elif tempkod == '50':
-                print("makam change", self.fpath, tempsira)
+                print("makam change", self.txtpath, tempsira)
             #print(measure)
             elif tempkod == '35':
                 #print("Measure repetition.", e.sira)
@@ -1061,7 +1061,7 @@ class symbtrscore(object):
 
     def writexml(self):
         #printing xml file
-        outpath = self.fpath.replace("txt", "xml")
+        outpath = self.txtpath.replace("txt", "xml")
         #print(etree.tostring(self.score))
         #print(outpath)
         f = open(outpath[:-4] + '.xml', 'wb')
