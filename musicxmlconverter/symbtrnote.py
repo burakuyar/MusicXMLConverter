@@ -208,7 +208,8 @@ class note(object):
                 temp_remainder = temp_payPayda - temp_undotted - dotVal
                 dotVal += dotVal / 2
             if self.dot > 1 and 0:
-                print("Dots! 1 or more. #ofDots:", self.dot,  self.sira)
+                if self.verbose:
+                    print("Dots! 1 or more. #ofDots:", self.dot,  self.sira)
             #print(sira, temp_payPayda, temp_undotted, dotVal, temp_remainder)
 
     def getAccidental(self):
