@@ -998,7 +998,7 @@ class symbtrscore(object):
                 try:
                     measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
                 except:
-                    print('Kod', tempkod, 'but no time information.')
+                    print('Kod', tempkod, 'but no time information.', e.sira)
             elif tempkod == '50':
                 print("makam change", self.fpath, tempsira)
             #print(measure)
