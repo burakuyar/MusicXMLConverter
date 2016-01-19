@@ -784,7 +784,7 @@ class symbtrscore(object):
             #nof_beats, beat_type = getUsul(self.usul, self.txtpath)
             nof_beats = self.mu2beatnumber
             beat_type = self.mu2beattype
-            print(nof_beats, beat_type)
+
             measureLength = nof_beats * nof_divs * (4 / float(beat_type))
 
             if nof_beats >= 20:
