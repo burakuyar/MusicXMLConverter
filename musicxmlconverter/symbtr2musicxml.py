@@ -245,12 +245,15 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, txtpath, mu2path, symbtrname=''):
-        self.txtpath = txtpath
-        self.mu2path = mu2path
+    def __init__(self, txtpath, mu2path, symbtrname='', mbid=''):
+        self.txtpath = txtpath  # filepath for the txt score
+        self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
+        self.mbid = mbid  # musicbrainz unique identifier
 
         if not symbtrname:
             self.symbtrname = os.path.splitext(os.path.basename(self.txtpath))[0]
+        else:
+            self.symbtrname = symbtrname
 
         #piece attributes
         self.makam = ""
@@ -260,8 +263,7 @@ class symbtrscore(object):
         self.composer = ""
         self.lyricist = ""
         self.mu2header = dict()
-        self.workmbid = []
-        self.worklink = []
+        self.mblink = []
 
         self.keysignature = []
         self.timesignature = []
@@ -314,32 +316,14 @@ class symbtrscore(object):
         self.composer = mu2composer
         self.lyricist = mu2lyricist
 
-    def getworkmbid(self):
-
-        jsonurl = "https://raw.githubusercontent.com/MTG/SymbTr/master/symbTr_mbid.json"
-        #the latest version of symbTr_mbid.json is being used. if your file is not found, there might be an error in the filename
-
-        response = urllib.urlopen(jsonurl)
-        data = json.loads(response.read())
-
-        mbids = list()
-        #print(data)
-        for e in data:
-            if e['name'] == self.txtpath.replace('txt', '').replace('/', '').replace('.', ''):
-                mbids.append(e['uuid']['mbid'])
-
-        if len(mbids) == 0:
-            print("SymbTr name is not found in the latest.")
-            self.workmbid = "N/A"
-        else:
-            for id in mbids:
-                self.workmbid.append(id)
-
-        for e in self.workmbid:
-            self.worklink.append("https://musicbrainz.org/work/" + e)
-        #print(self.workmbid)
-        #print(self.worklink)
-
+    def addmbidlink(self):
+        if self.mbid:
+            try:  # single dict
+                self.mblink.append("https://musicbrainz.org/" + self.mbid['type'] + self.mbid['mbid'])
+            except TypeError:  # list
+                for mbid in self.mbid:
+                    self.mblink.append("https://musicbrainz.org/" + mbid['type'] + mbid['mbid'])
+                    
     def readsymbtr(self):
         finfo = self.symbtrname.split('--')
         finfo[-1] = finfo[-1][:-4]
@@ -364,7 +348,7 @@ class symbtrscore(object):
         self.composer = self.composer.replace('_', ' ').title()
 
         self.sectionextractor()
-        self.getworkmbid()
+        self.addmbidlink()
 
         self.readsymbtrlines()
         self.notecount = len(self.notes)
@@ -721,7 +705,7 @@ class symbtrscore(object):
             xmllyricist.set('type', 'poet')
             xmllyricist.text = self.lyricist
 
-        for idlink in self.worklink:
+        for idlink in self.mblink:
             xmlrelation = etree.SubElement(xmlidentification, 'relation')
             xmlrelation.text = idlink
 
