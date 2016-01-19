@@ -283,6 +283,8 @@ class symbtrscore(object):
         self.notecount = 0
         self.measures = []
         self.tempo = None
+        self.mu2beatnumber = None
+        self.mu2beattype = None
 
         self.tuplet = 0
         self.tupletseq = []
@@ -320,12 +322,12 @@ class symbtrscore(object):
         mu2title = self.mu2header['title']['mu2_title']
         if mu2title is None:
             mu2title = self.mu2header['makam']['mu2_name'] + self.mu2header['usul']['mu2_name']
-        mu2composer = self.mu2header['composer']['mu2_name']
-        mu2lyricist = self.mu2header['lyricist']['mu2_name']
 
+        self.mu2composer = self.mu2header['composer']['mu2_name']
+        self.mu2lyricist = self.mu2header['lyricist']['mu2_name']
+        self.mu2beatnumber = self.mu2header['usul']['number_of_pulses']
+        self.mu2beattype = self.mu2header['usul']['mertebe']
         self.name = mu2title
-        self.composer = mu2composer
-        self.lyricist = mu2lyricist
 
     def addmbidlink(self):
         if self.mbid:
@@ -776,10 +778,13 @@ class symbtrscore(object):
 
         nof_divs = 96
         self.nof_divs = nof_divs
-        nof_beats = 4  # 4
-        beat_type = 4  # 4
+        nof_beats = 4
+        beat_type = 4
         if self.usul not in ['serbest', 'belirsiz']:
-            nof_beats, beat_type = getUsul(self.usul, self.txtpath)
+            #nof_beats, beat_type = getUsul(self.usul, self.txtpath)
+            nof_beats = self.mu2beatnumber
+            beat_type = self.mu2beattype
+            print(nof_beats, beat_type)
             measureLength = nof_beats * nof_divs * (4 / float(beat_type))
 
             if nof_beats >= 20:
