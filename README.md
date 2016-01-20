@@ -10,13 +10,13 @@ This tool is prepared for generating MusicXML scores from [SymbTr](https://githu
 import os
 from musicxmlconverter.symbtr2musicxml import symbtrscore
 
-txtpath = SymbTr_txt_filename
-mu2path = SymbTr_mu2_filename
+txtpath = 'path_to/kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi.txt'
+mu2path = 'path_to/kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi.mu2'
 
-symbtrname = SymbTr_name_without_extension
+symbtrname = kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi
 mbid = {u'mbid': u'b43fd61e-522c-4af4-821d-db85722bf48c', u'type': u'work'}
 
-outpath = path_for_MusicXML_output
+outpath = out_path/kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi.xml
 
 piece = symbtrscore(txtpath, mu2path, symbtrname=symbtrname, mbid=mbid) #txt info is fetched and attributes are calculated
 xmlstr = piece.convertsymbtr2xml()  # outputs the xml score as string
@@ -25,7 +25,7 @@ piece.writexml(outpath)  # you can also save the score to a file after calling t
 
 ##Installation
 
-If you want to install musicxmlconverter, it is recommended to install musicxmlconverter and dependencies into a virtualenv. In the terminal, do the following:
+If you want to install musicxmlconverter, it is recommended to install musicxmlconverter and its dependencies into a virtualenv. In the terminal, do the following:
 ```
 virtualenv env
 source env/bin/activate
