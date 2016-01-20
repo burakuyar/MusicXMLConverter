@@ -760,9 +760,6 @@ class symbtrscore(object):
             xmlrelation = etree.SubElement(xmlidentification, 'relation')
             xmlrelation.text = idlink
 
-        xmlmisc = etree.SubElement(xmlidentification, 'miscellaneous')
-        #xmllyricist.text = "misc test"
-
         # part-list
         partList = etree.SubElement(self.score, 'part-list')
         scorePart = etree.SubElement(partList, 'score-part')
