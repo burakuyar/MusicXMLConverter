@@ -794,10 +794,13 @@ class symbtrscore(object):
         xmlperminute = etree.SubElement(xmlmetronome, 'per-minute')
         xmlperminute.text = str(tempo)
 
+        # add text to usul with time signature
         directionType = etree.SubElement(direction, 'direction-type')
         words = etree.SubElement(directionType, 'words')
         words.set('default-y', '35')
-        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name']
+        # add a space in the end, because metronome will be rendered right next to this text
+        words.text = 'Usul: ' + self.mu2header['usul']['mu2_name'] + ' ' 
+        # words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name'] + ' '
 
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
