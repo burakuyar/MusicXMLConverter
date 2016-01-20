@@ -13,7 +13,7 @@ from musicxmlconverter.symbtr2musicxml import symbtrscore
 txtpath = 'path_to_symbtr_txt_file'
 mu2path = 'path_to_symbtr_mu2_file'
 
-# the symbtr-name without the extension, can be omitted if the filename is has the information 
+# the symbtr-name without the extension, can be omitted if the original filename is kept
 symbtrname = 'kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi'
 
 # the related musicbrainz mbid and the type is supplied as a dictionary
