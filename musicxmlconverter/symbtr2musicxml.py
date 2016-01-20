@@ -686,15 +686,16 @@ class symbtrscore(object):
         direction.set('placement', 'above')
         directionType = etree.SubElement(direction, 'direction-type')
 
-        # usul info
-        words = etree.SubElement(directionType, 'words')
-        words.set('default-y', '35')
-        if e.lyric:
-            words.text = 'Usul: ' + e.lyric.title()
-
+        # usul and tempo info
         tempindex = self.notes.index(e)
         tempo = self.symbtrtempo(self.notes[tempindex+1].pay, float(self.notes[tempindex+1].ms) - float(e.ms), self.notes[tempindex+1].payda,
                                  self.notes[tempindex+2].pay, float(self.notes[tempindex+2].ms) - float(self.notes[tempindex+1].ms), self.notes[tempindex+2].payda)
+
+        words = etree.SubElement(directionType, 'words')
+        words.set('default-y', '35')
+        if e.lyric:
+            words.text = 'Usul: ' + e.lyric.title() + ', Tempo: ' + str(tempo)
+
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
         if self.verbose:
@@ -775,13 +776,14 @@ class symbtrscore(object):
         directionType = etree.SubElement(direction, 'direction-type')
 
         # usul and makam info
-        words = etree.SubElement(directionType, 'words')
-        words.set('default-y', '35')
-        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name']
 
         # tempo info
         tempo = self.symbtrtempo(self.notes[1].pay, self.notes[1].ms, self.notes[1].payda,
                                  self.notes[2].pay, self.notes[2].ms, self.notes[2].payda)
+
+        words = etree.SubElement(directionType, 'words')
+        words.set('default-y', '35')
+        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name'] + ', Tempo: ' + str(tempo)
 
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
