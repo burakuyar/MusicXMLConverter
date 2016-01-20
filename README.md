@@ -45,3 +45,7 @@ Now you can install the rest of the dependencies:
 ```
 pip install -r requirements
 ```
+
+## Authors
+Burak Uyar	burakuyar	AT	gmail	DOT	com
+Sertan Şentürk	contact AT sertansenturk DOT com
