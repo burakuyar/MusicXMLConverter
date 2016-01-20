@@ -750,9 +750,18 @@ class symbtrscore(object):
             xmllyricist.set('type', 'poet')
             xmllyricist.text = self.mu2lyricist
 
+        xmlencoding = etree.SubElement(xmlidentification, 'encoding')
+        xmlencoder = etree.SubElement(xmlencoding, 'encoder')
+        xmlencoder.text = 'Burak Uyar'
+        xmlsoftware = etree.SubElement(xmlencoding, 'software')
+        xmlsoftware.text = 'https://github.com/burakuyar/MusicXMLConverter'
+
         for idlink in self.mblink:
             xmlrelation = etree.SubElement(xmlidentification, 'relation')
             xmlrelation.text = idlink
+
+        xmlmisc = etree.SubElement(xmlidentification, 'miscellaneous')
+        #xmllyricist.text = "misc test"
 
         # part-list
         partList = etree.SubElement(self.score, 'part-list')
