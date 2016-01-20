@@ -256,6 +256,7 @@ class symbtrscore(object):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
         self.mbid = mbid  # musicbrainz unique identifier
+        self.siraintervals = []
 
         if verbose is None:
             verbose = False
@@ -870,6 +871,7 @@ class symbtrscore(object):
         tempsection = 0
         graceflag = 0
         tempatts = ""
+        startindex = None
         tempmeasurehead = measure[-1]
 
         if self.phraseboundaryinfo == 1:
@@ -890,6 +892,8 @@ class symbtrscore(object):
             self.xmlnotationsflag = 0
 
             if tempkod not in ['35', '50', '51', '53', '54', '55']:
+                if not startindex:
+                    startindex = tempsira
                 xmlnote = etree.SubElement(measure[-1], 'note')  # note	UNIVERSAL
                 self.symbt2xmldict[e.sira] = xmlnote
                 xmlnote.append(etree.Comment('symbtr_txt_note_index ' + e.sira))
@@ -1038,6 +1042,9 @@ class symbtrscore(object):
                     tempatts = etree.SubElement(measure[-1], 'attributes')
                     measureSum = 0
                     tempmeasurehead = measure[-1]
+
+                    self.siraintervals.append({"start": startindex,"end": tempsira})
+                    startindex = None
                     # eof notes
 
                 elif self.subdivisionthreshold != 0 and measureSum % self.subdivisionthreshold == 0 and 0:  # disabled temporarily
@@ -1126,6 +1133,9 @@ class symbtrscore(object):
     def getxmlstr(self):
         return etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False,
             doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">')
+
+    def getmeasurembounds(self):
+        return self.siraintervals
 
     def writexml(self, outpath):
         # printing xml file
