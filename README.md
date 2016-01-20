@@ -10,16 +10,20 @@ This tool is prepared for generating MusicXML scores from [SymbTr](https://githu
 import os
 from musicxmlconverter.symbtr2musicxml import symbtrscore
 
-txtpath = 'path_to/kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi.txt'
-mu2path = 'path_to/kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi.mu2'
+txtpath = 'path_to_symbtr_txt_file'
+mu2path = 'path_to_symbtr_mu2_file'
 
-symbtrname = kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi
-mbid = {u'mbid': u'b43fd61e-522c-4af4-821d-db85722bf48c', u'type': u'work'}
+# the symbtr-name without the extension, can be omitted if the filename is has the information 
+symbtrname = 'kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi'
 
-outpath = out_path/kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi.xml
+# the related musicbrainz mbid and the type is supplied as a dictionary
+mbid = {u'mbid': u'b43fd61e-522c-4af4-821d-db85722bf48c', u'type': u'work'}  
+
+# output path
+outpath = 'path_to_symbtr_musicxml_output_file'
 
 piece = symbtrscore(txtpath, mu2path, symbtrname=symbtrname, mbid=mbid) #txt info is fetched and attributes are calculated
-xmlstr = piece.convertsymbtr2xml()  # outputs the xml score as string
+xmlstr = piece.convertsymbtr2xml()  # xml conversion; outputs the xml score as string
 piece.writexml(outpath)  # you can also save the score to a file after calling the conversion method above
 ```
 
