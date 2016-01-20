@@ -2,7 +2,7 @@
 
 ##Introduction
 
-This tool is prepared for generating MusicXML scores from [SymbTr](https://github.com/MTG/SymbTr) txt files.
+This tool is prepared for generating MusicXML scores from [SymbTr](https://github.com/MTG/SymbTr) txt and mu2 files.
 
 ##Usage
 
