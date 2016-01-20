@@ -691,10 +691,17 @@ class symbtrscore(object):
         tempo = self.symbtrtempo(self.notes[tempindex+1].pay, float(self.notes[tempindex+1].ms) - float(e.ms), self.notes[tempindex+1].payda,
                                  self.notes[tempindex+2].pay, float(self.notes[tempindex+2].ms) - float(self.notes[tempindex+1].ms), self.notes[tempindex+2].payda)
 
+        xmlmetronome = etree.SubElement(directionType, 'metronome')
+        xmlbeatunit = etree.SubElement(xmlmetronome, 'beat-unit')
+        xmlbeatunit.text = 'quarter'
+        xmlperminute = etree.SubElement(xmlmetronome, 'per-minute')
+        xmlperminute.text = str(tempo)
+
+        directionType = etree.SubElement(direction, 'direction-type')
         words = etree.SubElement(directionType, 'words')
         words.set('default-y', '35')
         if e.lyric:
-            words.text = 'Usul: ' + e.lyric.title() + ', Tempo: ' + str(tempo)
+            words.text = 'Usul: ' + e.lyric.title()
 
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
@@ -781,9 +788,16 @@ class symbtrscore(object):
         tempo = self.symbtrtempo(self.notes[1].pay, self.notes[1].ms, self.notes[1].payda,
                                  self.notes[2].pay, self.notes[2].ms, self.notes[2].payda)
 
+        xmlmetronome = etree.SubElement(directionType, 'metronome')
+        xmlbeatunit = etree.SubElement(xmlmetronome, 'beat-unit')
+        xmlbeatunit.text = 'quarter'
+        xmlperminute = etree.SubElement(xmlmetronome, 'per-minute')
+        xmlperminute.text = str(tempo)
+
+        directionType = etree.SubElement(direction, 'direction-type')
         words = etree.SubElement(directionType, 'words')
         words.set('default-y', '35')
-        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name'] + ', Tempo: ' + str(tempo)
+        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name']
 
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
