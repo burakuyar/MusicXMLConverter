@@ -950,44 +950,44 @@ class symbtrscore(object):
                         if self.verbose:
                             print("Tuplet with tremolo or glissando.")
                 if e.tremolo == 1:
-                    if not xmlnote.find('notations'):
+                    if xmlnote.find('notations')is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for tremolo.")
                     self.addtremolo(xmlnotations, e)
                 if e.glissando == 1 or self.xmlglissandoflag == 1:
-                    if not xmlnote.find('notations'):
+                    if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for glissando.")
                     self.addglissando(xmlnotations, e)
                 if e.trill == 1:
-                    if not xmlnote.find('notations'):
+                    if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for trill.")
                     self.addtrill(xmlnotations, e)
                 if e.mordent == 1:
-                    if not xmlnote.find('notations'):
+                    if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for mordent.")
                     self.addmordent(xmlnotations, e)
                 if e.invertedmordent == 1:
-                    if not xmlnote.find('notations'):
+                    if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for inverted mordent.", e.sira, e.kod, e.invertedmordent)
                     self.addinvertedmordent(xmlnotations, e)
                 if e.grupetto == 1:
-                    if not xmlnote.find('notations'):
+                    if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for grupetto/turn.", e.sira, e.kod, e.invertedmordent)
                     self.addgrupetto(xmlnotations, e)
 
                 if self.xmlgraceslurflag > 0 and 0:  # disabled temporarily
-                    if not xmlnote.find('notations'):
+                    if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for grace.")
