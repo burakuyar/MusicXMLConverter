@@ -1134,7 +1134,7 @@ class symbtrscore(object):
         return etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False,
             doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">')
 
-    def getmeasurembounds(self):
+    def get_measure_bounds(self):
         return self.siraintervals
 
     def writexml(self, outpath):
