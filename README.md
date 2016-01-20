@@ -1,4 +1,4 @@
-# MusicXMLConverter v1.0
+# MusicXMLConverter
 
 ##Introduction
 
