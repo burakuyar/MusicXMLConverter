@@ -132,6 +132,9 @@ class note(object):
             elif self.kod == '28':      #xml tag -> TURN
                 self.grupetto = 1
 
+        elif self.kod == '51':
+            self.lyric = self.soz1
+
         elif self.kod == '53':  #phrase boundary
             self.phraseend = 1
 
