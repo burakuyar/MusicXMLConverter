@@ -47,5 +47,5 @@ pip install -r requirements
 ```
 
 ## Authors
-Burak Uyar	burakuyar	AT	gmail	DOT	com
-Sertan Şentürk	contact AT sertansenturk DOT com
+Hasan Sercan Atlı	hsercanatli@gmail.com  
+Sertan Şentürk		contact@sertansenturk.com
