@@ -668,7 +668,7 @@ class symbtrscore(object):
         xmlmordent.set('approach', 'below')
         xmlmordent.set('departure', 'above')
 
-    def usulchange(self, measure, e, tempatts, nof_divs, templyric):
+    def usulchange(self, measure, e, tempatts, nof_divs):
         nof_beats = int(e.pay)
         beat_type = int(e.payda)
         measureLength = nof_beats * nof_divs * (4 / float(beat_type))
@@ -689,8 +689,8 @@ class symbtrscore(object):
         # usul info
         words = etree.SubElement(directionType, 'words')
         words.set('default-y', '35')
-        if templyric:
-            words.text = 'Usul: ' + templyric.title()
+        if e.lyric:
+            words.text = 'Usul: ' + e.lyric.title()
 
         tempindex = self.notes.index(e)
         tempo = self.symbtrtempo(self.notes[tempindex+1].pay, float(self.notes[tempindex+1].ms) - float(e.ms), self.notes[tempindex+1].payda,
@@ -1033,7 +1033,7 @@ class symbtrscore(object):
                         print("Initial usul is already set.")
                 else:
                     try:
-                        measureLength = self.usulchange(measure[-1], e, tempatts, nof_divs, templyric)
+                        measureLength = self.usulchange(measure[-1], e, tempatts, nof_divs)
                     except:
                         if self.verbose:
                             print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
