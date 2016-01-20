@@ -808,8 +808,9 @@ class symbtrscore(object):
         words = etree.SubElement(directionType, 'words')
         words.set('default-y', '35')
         # add a space in the end, because metronome will be rendered right next to this text
-        words.text = 'Usul: ' + self.mu2header['usul']['mu2_name'] + ' ' 
-        # words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name'] + ' '
+        #words.text = 'Usul: ' + self.mu2header['usul']['mu2_name'] + ' '
+        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] +\
+                     ', Form: ' + self.mu2header['form']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name'] + ' '
 
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
@@ -1122,10 +1123,10 @@ class symbtrscore(object):
                 xmlgrouping.set('type', 'stop')
                 xmlfeature = etree.SubElement(xmlgrouping, 'feature')
                 xmlfeature.set('type', 'flavor')
-        
+
         return self.getxmlstr()
 
-    def getxmlstr(self): 
+    def getxmlstr(self):
         return etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False,
             doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">')
 
