@@ -668,9 +668,9 @@ class symbtrscore(object):
         xmlmordent.set('approach', 'below')
         xmlmordent.set('departure', 'above')
 
-    def usulchange(self, measure, tempatts, temppay, temppayda, nof_divs, templyric):
-        nof_beats = int(temppay)
-        beat_type = int(temppayda)
+    def usulchange(self, measure, e, tempatts, nof_divs, templyric):
+        nof_beats = int(e.pay)
+        beat_type = int(e.payda)
         measureLength = nof_beats * nof_divs * (4 / float(beat_type))
         # print(nof_beats, beat_type)
         # print(measureSum)
@@ -691,6 +691,14 @@ class symbtrscore(object):
         words.set('default-y', '35')
         if templyric:
             words.text = 'Usul: ' + templyric.title()
+
+        tempindex = self.notes.index(e)
+        tempo = self.symbtrtempo(self.notes[tempindex+1].pay, float(self.notes[tempindex+1].ms) - float(e.ms), self.notes[tempindex+1].payda,
+                                 self.notes[tempindex+2].pay, float(self.notes[tempindex+2].ms) - float(self.notes[tempindex+1].ms), self.notes[tempindex+2].payda)
+        sound = etree.SubElement(direction, 'sound')
+        sound.set('tempo', str(tempo))
+        if self.verbose:
+            print("Tempo change ok.", e.sira, self.notes[tempindex+1].sira)
 
         return measureLength
 
@@ -1025,7 +1033,7 @@ class symbtrscore(object):
                         print("Initial usul is already set.")
                 else:
                     try:
-                        measureLength = self.usulchange(measure[-1], tempatts, temppay, temppayda, nof_divs, templyric)
+                        measureLength = self.usulchange(measure[-1], e, tempatts, nof_divs, templyric)
                     except:
                         if self.verbose:
                             print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
