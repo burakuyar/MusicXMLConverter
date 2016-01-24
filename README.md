@@ -1,6 +1,6 @@
 # MusicXMLConverter
 
-Tools for generating MusicXML scores from [SymbTr](https://github.com/MTG/SymbTr) txt and mu2 files.
+Tools to generate MusicXML scores from [SymbTr](https://github.com/MTG/SymbTr) txt and mu2 files.
 
 ##Usage
 
