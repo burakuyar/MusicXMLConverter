@@ -255,7 +255,10 @@ class symbtrscore(object):
     def __init__(self, txtpath, mu2path, symbtrname='', mbid_url='', verbose=None):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
-        self.mbid_url = mbid_url  # musicbrainz unique identifier
+
+        # musicbrainz unique identifier
+        self.mbid_url = [mbid_url] if isinstance(mbid_url, basestring) else mbid_url 
+        
         self.siraintervals = []
 
         if verbose is None:
@@ -333,14 +336,6 @@ class symbtrscore(object):
         self.mu2beattype = self.mu2header['usul']['mertebe']
         self.name = mu2title
 
-    def addmbidlink(self):
-        if self.mbid_url:
-            try:  # single dict
-                self.mblink.append(self.mbid_url)
-            except TypeError:  # list
-                for mbid_url in self.mbid_url:
-                    self.mblink.append(self.mbid_url)
-
     def readsymbtr(self):
         finfo = self.symbtrname.split('--')
         finfo[-1] = finfo[-1][:-4]
@@ -365,7 +360,6 @@ class symbtrscore(object):
         self.composer = self.composer.replace('_', ' ').title()
 
         self.sectionextractor()
-        self.addmbidlink()
 
         self.readsymbtrlines()
         self.notecount = len(self.notes)
@@ -757,7 +751,7 @@ class symbtrscore(object):
         xmlsoftware = etree.SubElement(xmlencoding, 'software')
         xmlsoftware.text = 'https://github.com/burakuyar/MusicXMLConverter'
 
-        for idlink in self.mblink:
+        for idlink in self.mbid_url:
             xmlrelation = etree.SubElement(xmlidentification, 'relation')
             xmlrelation.text = idlink
 
