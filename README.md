@@ -2,7 +2,7 @@
 
 Tools to generate MusicXML scores from [SymbTr](https://github.com/MTG/SymbTr) txt and mu2 files.
 
-##Usage
+## Usage
 
 ```python
 import os
@@ -27,7 +27,7 @@ piece.writexml(outpath)  # you can also save the score to a file after calling t
 
 You can refer to [demo.ipynb](https://github.com/burakuyar/MusicXMLConverter/blob/master/demo.ipynb) for an interactive demo.
 
-##Installation
+## Installation
 
 If you want to install musicxmlconverter, it is recommended to install musicxmlconverter and its dependencies into a virtualenv. In the terminal, do the following:
 ```
