@@ -252,10 +252,10 @@ def getKeySig(piecemakam, keysig):
 
 
 class symbtrscore(object):
-    def __init__(self, txtpath, mu2path, symbtrname='', mbid='', verbose=None):
+    def __init__(self, txtpath, mu2path, symbtrname='', mbid_url='', verbose=None):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
-        self.mbid = mbid  # musicbrainz unique identifier
+        self.mbid_url = mbid_url  # musicbrainz unique identifier
         self.siraintervals = []
 
         if verbose is None:
@@ -334,12 +334,12 @@ class symbtrscore(object):
         self.name = mu2title
 
     def addmbidlink(self):
-        if self.mbid:
+        if self.mbid_url:
             try:  # single dict
-                self.mblink.append("https://musicbrainz.org/" + self.mbid['type'] + '/' + self.mbid['mbid'])
+                self.mblink.append(self.mbid_url)
             except TypeError:  # list
-                for mbid in self.mbid:
-                    self.mblink.append("https://musicbrainz.org/" + mbid['type'] + '/' + mbid['mbid'])
+                for mbid_url in self.mbid_url:
+                    self.mblink.append(self.mbid_url)
 
     def readsymbtr(self):
         finfo = self.symbtrname.split('--')

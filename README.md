@@ -16,13 +16,13 @@ mu2path = 'path_to_symbtr_mu2_file'
 # the symbtr-name without the extension, can be omitted if the original filename is kept
 symbtrname = 'kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi'
 
-# the related musicbrainz mbid and the type is supplied as a dictionary
-mbid = {u'mbid': u'b43fd61e-522c-4af4-821d-db85722bf48c', u'type': u'work'}  
+# the related musicbrainz mbid is supplied as a url
+mbid_url = 'http://musicbrainz.org/work/b43fd61e-522c-4af4-821d-db85722bf48c' 
 
 # output path
 outpath = 'path_to_symbtr_musicxml_output_file'
 
-piece = symbtrscore(txtpath, mu2path, symbtrname=symbtrname, mbid=mbid) #txt info is fetched and attributes are calculated
+piece = symbtrscore(txtpath, mu2path, symbtrname=symbtrname, mbid_url=mbid_url) #txt info is fetched and attributes are calculated
 xmlstr = piece.convertsymbtr2xml()  # xml conversion; outputs the xml score as string
 piece.writexml(outpath)  # you can also save the score to a file after calling the conversion method above
 ```
