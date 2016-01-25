@@ -318,7 +318,7 @@ class symbtrscore(object):
     def sectionextractor(self):
         data, isDataValid = extractor.extract(self.txtpath, symbtrname=self.symbtrname,
                                               extract_all_labels=True, print_warnings=False)
-        self.mu2header, headerRow, isHeaderValid = symbtrreader.readMu2Header(self.mu2path)
+        self.mu2header, headerRow, isHeaderValid = symbtrreader.readMu2Header(self.mu2path, self.symbtrname)
         # data = extractor.merge(txtdata, Mu2header)
         for item in data['sections']:
             self.sectionsextracted[item['startNote']] = item['name']
