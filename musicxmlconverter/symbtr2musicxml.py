@@ -1,18 +1,10 @@
 # -*- coding: utf-8 -*-
-import numpy
-import matplotlib.pyplot as plt
 import os
-import fnmatch
 import copy
 import symbtrnote
-import getopt
-import sys
-import urllib
-from types import *
 from lxml import etree
-import json
-from symbtrdataextractor import extractor
-from symbtrdataextractor import symbtrreader
+from symbtrdataextractor.SymbTrDataExtractor import SymbTrDataExtractor
+from symbtrdataextractor.SymbTrReader import SymbTrReader
 
 # koma definitions
 # flats
@@ -316,16 +308,24 @@ class symbtrscore(object):
             print(vars(e))
 
     def sectionextractor(self):
-        data, isDataValid = extractor.extract(self.txtpath, symbtrname=self.symbtrname,
-                                              extract_all_labels=True, print_warnings=False)
-        self.mu2header, headerRow, isHeaderValid = symbtrreader.readMu2Header(self.mu2path, self.symbtrname)
+        extractor = SymbTrDataExtractor(extract_all_labels=True,
+                                        print_warnings=False)
+        data, isDataValid = extractor.extract(self.txtpath,
+                                              symbtr_name=self.symbtrname)
+
+
+        self.mu2header, headerRow, isHeaderValid = \
+            SymbTrReader.read_mu2_header(self.mu2path,
+                                         symbtr_name = self.symbtrname)
+
         # data = extractor.merge(txtdata, Mu2header)
         for item in data['sections']:
-            self.sectionsextracted[item['startNote']] = item['name']
+            self.sectionsextracted[item['start_note']] = item['name']
         # print(self.mu2header)
         mu2title = self.mu2header['title']['mu2_title']
         if mu2title is None:
-            mu2title = self.mu2header['makam']['mu2_name'] + self.mu2header['usul']['mu2_name']
+            mu2title = self.mu2header['makam']['mu2_name'] + \
+                       self.mu2header['usul']['mu2_name']
 
         mu2composer = self.mu2header['composer']['mu2_name']
         mu2lyricist = self.mu2header['lyricist']['mu2_name']
