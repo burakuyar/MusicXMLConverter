@@ -225,6 +225,7 @@ def getKeySig(piecemakam, keysig):
 
     # print(makamName[0].text)
     # print(donanim)
+    donanim.reverse()
 
     while len(donanim) > 0:
         temp_key = donanim.pop()
