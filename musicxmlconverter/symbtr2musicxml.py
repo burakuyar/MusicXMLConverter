@@ -20,14 +20,20 @@ d_kmucennep = 'slash-quarter-sharp'  # slash-quarter-sharp
 d_bmucennep = 'slash-sharp'
 
 # section list
-sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM", u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE",
-               u"HÂNE-İ SÂNİ", u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE", u"1. HANEYE", u"2. HANEYE",
-               u"3. HANEYE", u"4. HANEYE", u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME",
-               u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME", u"1. HANE VE TESLİM", u"2. HANE VE TESLİM",
-               u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME", u"ZEMİN", u"NAKARAT", u"MEYAN",
-               u"SESLERLE NİNNİ", u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI", u"GİRİŞ VE ARA SAZI", u"GİRİŞ",
-               u"FİNAL", u"SAZ", u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO", u"MÜZİK", u"SERBEST",
-               u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ", u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM",
+sectionList = [u"1. HANE", u"2. HANE", u"3. HANE", u"4. HANE", u"TESLİM",
+               u"TESLİM ", u"MÜLÂZİME", u"SERHÂNE", u"HÂNE-İ SÂNİ",
+               u"HÂNE-İ SÂLİS", u"SERHANE", u"ORTA HANE", u"SON HANE",
+               u"1. HANEYE", u"2. HANEYE", u"3. HANEYE", u"4. HANEYE",
+               u"KARAR", u"1. HANE VE MÜLÂZİME", u"2. HANE VE MÜLÂZİME",
+               u"3. HANE VE MÜLÂZİME", u"4. HANE VE MÜLÂZİME",
+               u"1. HANE VE TESLİM", u"2. HANE VE TESLİM",
+               u"3. HANE VE TESLİM", u"4. HANE VE TESLİM", u"ARANAĞME",
+               u"ZEMİN", u"NAKARAT", u"MEYAN", u"SESLERLE NİNNİ",
+               u"OYUN KISMI", u"ZEYBEK KISMI", u"GİRİŞ SAZI",
+               u"GİRİŞ VE ARA SAZI", u"GİRİŞ", u"FİNAL", u"SAZ",
+               u"ARA SAZI", u"SUSTA", u"KODA", u"DAVUL", u"RİTM", u"BANDO",
+               u"MÜZİK", u"SERBEST", u"ARA TAKSİM", u"GEÇİŞ TAKSİMİ",
+               u"KÜŞAT", u"1. SELAM", u"2. SELAM", u"3. SELAM", u"4. SELAM",
                u"TERENNÜM"]
 
 kodlist = []
@@ -38,14 +44,12 @@ printflag = 0
 tuplet = 0
 capitals = []
 
-#errLog = open('errLog.txt', 'w')
 missingUsuls = []
 
 
-def getNoteType(note, type, pay, payda, sira):
+def getNoteType(note, type, pay, payda):
     global tuplet
 
-    ## NEW PART FOR DOTTED NOTES
     temp_payPayda = float(pay) / int(payda)
 
     if temp_payPayda >= 1.0:
