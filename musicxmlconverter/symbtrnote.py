@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 
-trToWestern = {'La': 'A', 'Si': 'B', 'Do': 'C', 'Re': 'D', 'Mi': 'E',
-               'Fa': 'F', 'Sol': 'G'}
 # koma definitions
 # flats
 b_koma = 'quarter-flat'  # 'flat-down'
