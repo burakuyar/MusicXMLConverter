@@ -7,6 +7,8 @@ from symbtrdataextractor.SymbTrDataExtractor import SymbTrDataExtractor
 from symbtrdataextractor.SymbTrReader import SymbTrReader
 
 # koma definitions
+b_natural = 'natural'
+
 # flats
 b_koma = 'quarter-flat'  # 'flat-down'
 b_bakiyye = 'slash-flat'
@@ -44,43 +46,44 @@ printflag = 0
 tuplet = 0
 capitals = []
 
-missingUsuls = []
+missing_usuls = []
 
 
-def getNoteType(note, type, pay, payda):
+def get_note_type(note, note_type, pay, payda):
     global tuplet
 
-    temp_payPayda = float(pay) / int(payda)
+    temp_pay_payda = float(pay) / int(payda)
 
-    if temp_payPayda >= 1.0:
-        type.text = 'whole'
+    temp_undotted = None
+    if temp_pay_payda >= 1.0:
+        note_type.text = 'whole'
         temp_undotted = 1.0
-    elif 1.0 > temp_payPayda >= 1.0 / 2:
-        type.text = 'half'
+    elif 1.0 > temp_pay_payda >= 1.0 / 2:
+        note_type.text = 'half'
         temp_undotted = 1.0 / 2
-    elif 1.0 / 2 > temp_payPayda >= 1.0 / 4:
-        type.text = 'quarter'
+    elif 1.0 / 2 > temp_pay_payda >= 1.0 / 4:
+        note_type.text = 'quarter'
         temp_undotted = 1.0 / 4
-    elif 1.0 / 4 > temp_payPayda >= 1.0 / 8:
-        type.text = 'eighth'
+    elif 1.0 / 4 > temp_pay_payda >= 1.0 / 8:
+        note_type.text = 'eighth'
         temp_undotted = 1.0 / 8
-    elif 1.0 / 8 > temp_payPayda >= 1.0 / 16:
-        type.text = '16th'
+    elif 1.0 / 8 > temp_pay_payda >= 1.0 / 16:
+        note_type.text = '16th'
         temp_undotted = 1.0 / 16
-    elif 1.0 / 16 > temp_payPayda >= 1.0 / 32:
-        type.text = '32nd'
+    elif 1.0 / 16 > temp_pay_payda >= 1.0 / 32:
+        note_type.text = '32nd'
         temp_undotted = 1.0 / 32
-    elif 1.0 / 32 > temp_payPayda >= 1.0 / 64:
-        type.text = '64th'
+    elif 1.0 / 32 > temp_pay_payda >= 1.0 / 64:
+        note_type.text = '64th'
         temp_undotted = 1.0 / 64
 
     # check for tuplets
-    if temp_payPayda == 1.0 / 12:
-        type.text = 'eighth'
+    if temp_pay_payda == 1.0 / 12:
+        note_type.text = 'eighth'
         temp_undotted = 1.0 / 12
         tuplet += 1
-    elif temp_payPayda == 1.0 / 24:
-        type.text = '16th'
+    elif temp_pay_payda == 1.0 / 24:
+        note_type.text = '16th'
         temp_undotted = 1.0 / 24
         tuplet += 1
     # end of tuplets
@@ -88,39 +91,40 @@ def getNoteType(note, type, pay, payda):
     # not tuplet, normal or dotted
     # print(tuplet)
 
-    # print(temp_payPayda)
+    # print(temp_pay_payda)
 
     nofdots = 0
     timemodflag = 0
     if tuplet == 0:
-        # print(sira, temp_payPayda, temp_undotted)
-        temp_remainder = temp_payPayda - temp_undotted
+        # print(sira, temp_pay_payda, temp_undotted)
+        temp_remainder = temp_pay_payda - temp_undotted
 
-        dotVal = temp_undotted / 2.0
+        dot_val = temp_undotted / 2.0
         while temp_remainder > 0:
-            type = etree.SubElement(note, 'dot')
+            # note_type = etree.SubElement(note, 'dot')
             nofdots += 1
-            temp_remainder = temp_payPayda - temp_undotted - dotVal
-            dotVal += dotVal / 2
+            # temp_remainder = temp_pay_payda - temp_undotted - dot_val
+            dot_val += dot_val / 2
             break
-            # print(sira, temp_payPayda, temp_undotted, dotVal, temp_remainder)
+            # print(sira, temp_pay_payda, temp_undotted, dot_val,
+            # temp_remainder)
 
-    ##END OF NEW PART FOR DOTTED NOTES
     else:
         timemodflag = 1
 
     return timemodflag
 
-    # print(sira, temp_payPayda, '------------------')
+    # print(sira, temp_pay_payda, '------------------')
 
 
-def getUsul(usul, file):
-    fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'makams_usuls', 'usuls_v3_ANSI.txt')
+def get_usul(usul, filepath):
+    fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         'makams_usuls', 'usuls_v3_ANSI.txt')
 
-    usulID = []
-    usulName = []
-    nofBeats = []
-    beatType = []
+    usul_id = []
+    usul_name = []
+    num_beats = []
+    beat_type = []
     accents = []
 
     f = open(fpath)
@@ -136,24 +140,24 @@ def getUsul(usul, file):
             # print(temp_line)
 
             try:
-                usulID.append(temp_line.pop())
+                usul_id.append(temp_line.pop())
             except:
-                usulID.append('')
+                usul_id.append('')
 
             try:
-                usulName.append(temp_line.pop())
+                usul_name.append(temp_line.pop())
             except:
-                usulName.append('')
+                usul_name.append('')
 
             try:
-                nofBeats.append(temp_line.pop())
+                num_beats.append(temp_line.pop())
             except:
-                nofBeats.append('')
+                num_beats.append('')
 
             try:
-                beatType.append(temp_line.pop())
+                beat_type.append(temp_line.pop())
             except:
-                beatType.append('')
+                beat_type.append('')
 
             try:
                 accents.append(temp_line.pop())
@@ -161,73 +165,82 @@ def getUsul(usul, file):
                 accents.append('')
 
     f.close()
-    # eof file read
+    # eof filepath read
     '''
-	print(usulID[usulID.index(usul)])
-	print(usulName)
-	print(nofBeats[usulID.index(usul)])
-	print(beatType[usulID.index(usul)])
-	print(accents)
-	print(len(usulID),len(usulName),len(nofBeats),len(beatType),len(accents))
-	'''
+    print(usul_id[usul_id.index(usul)])
+    print(usul_name)
+    print(num_beats[usul_id.index(usul)])
+    print(beat_type[usul_id.index(usul)])
+    print(accents)
+    print(len(usul_id),len(usul_name),len(num_beats),len(beat_type),
+    len(accents))
+    '''
     try:
-        # print( nofBeats[usulID.index(usul)], 2**int(beatType[usulID.index(usul)]) )
-        return int(nofBeats[usulID.index(usul)]), int(
-            beatType[usulID.index(usul)])  # second paramater, usul_v1 2**int(beatType[usulID.index(usul)]
+        # print( num_beats[usul_id.index(usul)], 2**int(
+        # beat_type[usul_id.index(usul)]) )
+        return int(num_beats[usul_id.index(usul)]), int(
+            beat_type[usul_id.index(
+                usul)])
+        # second paramater, usul_v1 2**int(beat_type[usul_id.index(usul)]
     except:
         # print('Usul: ', usul, ' not in list')
         # errLog.write('Usul: ' + usul + ' not in list.\n')
-        missingUsuls.append(usul + '\t' + file)
+        missing_usuls.append(usul + '\t' + filepath)
         # return 4, 4
 
 
-def getAccName(alter):
+def get_accidental_name(alter):
     # print('Alter: ',alter)
+    accidental_name = b_natural
     if alter in ['+1', '+2']:
-        accName = d_koma
+        accidental_name = d_koma
     elif alter in ['+3', '+4']:
-        accName = d_bakiyye
+        accidental_name = d_bakiyye
     elif alter in ['+5', '+6']:
-        accName = d_kmucennep
+        accidental_name = d_kmucennep
     elif alter in ['+7', '+8']:
-        accName = d_bmucennep
+        accidental_name = d_bmucennep
     elif alter in ['-1', '-2']:
-        accName = b_koma
+        accidental_name = b_koma
     elif alter in ['-3', '-4']:
-        accName = b_bakiyye
+        accidental_name = b_bakiyye
     elif alter in ['-5', '-6']:
-        accName = b_kmucennep
+        accidental_name = b_kmucennep
     elif alter in ['-7', '-8']:
-        accName = b_bmucennep
+        accidental_name = b_bmucennep
 
-    return accName
+    return accidental_name
 
 
-def getKeySig(piecemakam, keysig):
-    #print(piecemakam)
-    makamTree = etree.parse(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'makams_usuls', 'Makamlar.xml'))
+def get_key_signature(piecemakam, keysig):
+    # print(piecemakam)
+    makam_tree = etree.parse(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                     'makams_usuls', 'Makamlar.xml'))
 
     xpression = '//dataroot/Makamlar[makam_adi= $makam]/'
     makam_ = piecemakam
 
-    makamName = makamTree.xpath(xpression + 'Makam_x0020_Adi', makam=makam_)
-    # print(makamName)
+    # makam_name = makam_tree.xpath(xpression + 'Makam_x0020_Adi', makam=makam_)
+    # print(makam_name)
 
     donanim = []
-    trToWestern = {'La': 'A', 'Si': 'B', 'Do': 'C', 'Re': 'D', 'Mi': 'E', 'Fa': 'F', 'Sol': 'G'}
+    solfege_to_letter = {'La': 'A', 'Si': 'B', 'Do': 'C', 'Re': 'D', 'Mi': 'E',
+                         'Fa': 'F', 'Sol': 'G'}
 
     for i in range(1, 10):
         try:
-            donanim.append((makamTree.xpath(xpression + 'Donanim-' + str(i), makam=makam_))[0].text)
+            donanim.append((makam_tree.xpath(xpression + 'Donanim-' + str(i),
+                                             makam=makam_))[0].text)
             # print(donanim, i)
-            for key, value in trToWestern.iteritems():
+            for key, value in solfege_to_letter.iteritems():
                 donanim[-1] = donanim[-1].replace(key, value)
-                # donanim[-1] = trToWestern[donanim[-1][:2]] + donanim[-1][2:]
+                # donanim[-1] = solfege_to_letter[donanim[-1][:2]] + donanim[-1][2:]
                 # print(donanim[-1], i)
         except:
             continue
 
-    # print(makamName[0].text)
+    # print(makam_name[0].text)
     # print(donanim)
     donanim.reverse()
 
@@ -245,17 +258,19 @@ def getKeySig(piecemakam, keysig):
             keyalter.text = temp_key[-2:]
             # '''
             keyaccidental = etree.SubElement(keysig, 'key-accidental')
-            keyaccidental.text = getAccName(temp_key[-2:])
+            keyaccidental.text = get_accidental_name(temp_key[-2:])
 
 
 class symbtrscore(object):
-    def __init__(self, txtpath, mu2path, symbtrname='', mbid_url='', verbose=None):
+    def __init__(self, txtpath, mu2path, symbtrname='', mbid_url='',
+                 verbose=None):
         self.txtpath = txtpath  # filepath for the txt score
         self.mu2path = mu2path  # filepath for the mu2 score; used for obtaining the metadata from its header
 
         # musicbrainz unique identifier
-        self.mbid_url = [mbid_url] if isinstance(mbid_url, basestring) else mbid_url 
-        
+        self.mbid_url = [mbid_url] if isinstance(mbid_url,
+                                                 basestring) else mbid_url
+
         self.siraintervals = []
 
         if verbose is None:
@@ -263,7 +278,8 @@ class symbtrscore(object):
         self.verbose = verbose
 
         if not symbtrname:
-            self.symbtrname = os.path.splitext(os.path.basename(self.txtpath))[0]
+            self.symbtrname = os.path.splitext(os.path.basename(self.txtpath))[
+                0]
         else:
             self.symbtrname = symbtrname
 
@@ -274,7 +290,7 @@ class symbtrscore(object):
         self.name = ""
         self.composer = ""
         self.lyricist = ""
-        self.mu2header = dict()
+        self.mu2_header = dict()
         self.mblink = []
 
         self.keysignature = []
@@ -284,8 +300,8 @@ class symbtrscore(object):
         self.notecount = 0
         self.measures = []
         self.tempo = None
-        self.mu2beatnumber = None
-        self.mu2beattype = None
+        self.mu2_beat_num = None
+        self.mu2_beat_type = None
 
         self.tuplet = 0
         self.tupletseq = []
@@ -318,28 +334,27 @@ class symbtrscore(object):
         data, isDataValid = extractor.extract(self.txtpath,
                                               symbtr_name=self.symbtrname)
 
-
-        self.mu2header, headerRow, isHeaderValid = \
+        self.mu2_header, header_row, is_header_valid = \
             SymbTrReader.read_mu2_header(self.mu2path,
-                                         symbtr_name = self.symbtrname)
+                                         symbtr_name=self.symbtrname)
 
         # data = extractor.merge(txtdata, Mu2header)
         for item in data['sections']:
             self.sectionsextracted[item['start_note']] = item['name']
-        # print(self.mu2header)
-        mu2title = self.mu2header['title']['mu2_title']
-        if mu2title is None:
-            mu2title = self.mu2header['makam']['mu2_name'] + \
-                       self.mu2header['usul']['mu2_name']
+        # print(self.mu2_header)
+        mu2_title = self.mu2_header['title']['mu2_title']
+        if mu2_title is None:
+            mu2_title = self.mu2_header['makam']['mu2_name'] + \
+                        self.mu2_header['usul']['mu2_name']
 
-        mu2composer = self.mu2header['composer']['mu2_name']
-        mu2lyricist = self.mu2header['lyricist']['mu2_name']
+        mu2_composer = self.mu2_header['composer']['mu2_name']
+        mu2_lyricist = self.mu2_header['lyricist']['mu2_name']
 
-        self.mu2composer = mu2composer
-        self.mu2lyricist = mu2lyricist
-        self.mu2beatnumber = self.mu2header['usul']['number_of_pulses']
-        self.mu2beattype = self.mu2header['usul']['mertebe']
-        self.name = mu2title
+        self.mu2_composer = mu2_composer
+        self.mu2_lyricist = mu2_lyricist
+        self.mu2_beat_num = self.mu2_header['usul']['number_of_pulses']
+        self.mu2_beat_type = self.mu2_header['usul']['mertebe']
+        self.name = mu2_title
 
     def readsymbtr(self):
         finfo = self.symbtrname.split('--')
@@ -387,7 +402,8 @@ class symbtrscore(object):
             else:
                 temp_line = temp_line.split('\t')
                 # print(temp_line)
-                self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))  # NOTE CLASS
+                self.notes.append(symbtrnote.Note(temp_line,
+                                                  verbose=self.verbose))  # NOTE CLASS
                 # print(vars(self.notes[-1]))
 
                 if self.notes[-1].kod not in ['51']:
@@ -399,30 +415,37 @@ class symbtrscore(object):
                         lastpart = temppay - firstpart
 
                         temp_line[6] = str(firstpart)
-                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
+                        self.notes.append(
+                            symbtrnote.Note(temp_line, verbose=self.verbose))
                         temp_line[6] = str(lastpart)
                         temp_line[11] = '_'
-                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
+                        self.notes.append(
+                            symbtrnote.Note(temp_line, verbose=self.verbose))
                     elif self.notes[-1].pay in ['9', '11']:
                         temppay = int(self.notes[-1].pay)
                         # print("Note splitting:", temppay)
                         del self.notes[-1]
 
                         temp_line[6] = str(3)
-                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
+                        self.notes.append(
+                            symbtrnote.Note(temp_line, verbose=self.verbose))
                         temp_line[6] = str(temppay - 3)
                         temp_line[11] = '_'
-                        self.notes.append(symbtrnote.note(temp_line, verbose=self.verbose))
+                        self.notes.append(
+                            symbtrnote.Note(temp_line, verbose=self.verbose))
 
-                if self.notes[-1].rest == 1 and self.notes[-1].pay == '0':  # removing rests with 0 duration
+                if self.notes[-1].rest == 1 and self.notes[
+                    -1].pay == '0':  # removing rests with 0 duration
                     if self.verbose:
-                        print("Warning! Note deleted. Rest with Pay:0. Sira:", self.notes[-1].sira)
+                        print("Warning! Note deleted. Rest with Pay:0. Sira:",
+                              self.notes[-1].sira)
                     del self.notes[-1]
                 # DONE READING
 
                 lastnote = self.notes[-1]
                 if lastnote.graceerror == 1 and self.verbose:
-                    print("\tgrace error:", lastnote.sira, lastnote.kod, lastnote.pay, lastnote.payda)
+                    print("\tgrace error:", lastnote.sira, lastnote.kod,
+                          lastnote.pay, lastnote.payda)
                 # CHECK POINTS
                 """
                 if self.notes[-1].rest == 1 and self.notes[-1].dot == 1:
@@ -471,7 +494,8 @@ class symbtrscore(object):
 
     def addwordinfo(self, xmllyric, templyric, word, e):
         # lyrics word information
-        if len(templyric) > 0 and templyric != "." and templyric not in sectionList:
+        if len(
+                templyric) > 0 and templyric != "." and templyric not in sectionList:
             # print(spacechars)
             syllabic = etree.SubElement(xmllyric, 'syllabic')
             if e.syllabic is not None and word == 1:
@@ -495,11 +519,12 @@ class symbtrscore(object):
         temp_duration = int(self.nof_divs * 4 * int(e.pay) / int(e.payda))
         xmlduration.text = str(temp_duration)
 
-        return temp_duration  # duration calculation	UNIVERSAL
+        return temp_duration  # duration calculation    UNIVERSAL
 
     def addaccidental(self, xmlnote, xmlpitch, e):
         if e.accidental not in [None]:
-            accidental = etree.SubElement(xmlnote, 'accidental')  # accidental XML create
+            accidental = etree.SubElement(xmlnote,
+                                          'accidental')  # accidental XML create
             # print acc
             accidental.text = e.accidental
             '''
@@ -595,7 +620,10 @@ class symbtrscore(object):
             xmlglissando.set('type', 'stop')
             self.xmlglissandoflag = 0
             if self.verbose:
-                print("Glissando stop. Flag:", self.xmlglissandoflag, e.sira, e.kod, e.lyric)
+                print(
+                    "Glissando stop. Flag:", self.xmlglissandoflag, e.sira,
+                    e.kod,
+                    e.lyric)
         if e.glissando == 1:
             xmlglissando = etree.SubElement(xmlnotations, 'glissando')
             xmlglissando.set('line-type', 'wavy')
@@ -603,7 +631,10 @@ class symbtrscore(object):
             self.xmlglissandoflag = 1
 
             if self.verbose:
-                print("Glissando start. Flag:", self.xmlglissandoflag, e.sira, e.kod, e.lyric)
+                print(
+                    "Glissando start. Flag:", self.xmlglissandoflag, e.sira,
+                    e.kod,
+                    e.lyric)
 
     def addtrill(self, xmlnotations, e):
         xmlornaments = etree.SubElement(xmlnotations, 'ornaments')
@@ -676,20 +707,25 @@ class symbtrscore(object):
         # print(measureSum)
         time = etree.SubElement(tempatts, 'time')
         beats = etree.SubElement(time, 'beats')
-        beatType = etree.SubElement(time, 'beat-type')
+        beat_type = etree.SubElement(time, 'beat-type')
         beats.text = str(nof_beats)
-        beatType.text = str(beat_type)
+        beat_type.text = str(beat_type)
 
         # 1st measure direction: usul and makam info
-        #						tempo(metronome)
+        #                        tempo(metronome)
         direction = etree.SubElement(measure, 'direction')
         direction.set('placement', 'above')
         directionType = etree.SubElement(direction, 'direction-type')
 
         # usul and tempo info
         tempindex = self.notes.index(e)
-        tempo = self.symbtrtempo(self.notes[tempindex+1].pay, float(self.notes[tempindex+1].ms) - float(e.ms), self.notes[tempindex+1].payda,
-                                 self.notes[tempindex+2].pay, float(self.notes[tempindex+2].ms) - float(self.notes[tempindex+1].ms), self.notes[tempindex+2].payda)
+        tempo = self.symbtrtempo(self.notes[tempindex + 1].pay,
+                                 float(self.notes[tempindex + 1].ms) - float(
+                                     e.ms), self.notes[tempindex + 1].payda,
+                                 self.notes[tempindex + 2].pay,
+                                 float(self.notes[tempindex + 2].ms) - float(
+                                     self.notes[tempindex + 1].ms),
+                                 self.notes[tempindex + 2].payda)
 
         xmlmetronome = etree.SubElement(directionType, 'metronome')
         xmlbeatunit = etree.SubElement(xmlmetronome, 'beat-unit')
@@ -706,7 +742,7 @@ class symbtrscore(object):
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
         if self.verbose:
-            print("Tempo change ok.", e.sira, self.notes[tempindex+1].sira)
+            print("Tempo change ok.", e.sira, self.notes[tempindex + 1].sira)
 
         return measureLength
 
@@ -744,11 +780,11 @@ class symbtrscore(object):
         xmlidentification = etree.SubElement(self.score, 'identification')
         xmlcomposer = etree.SubElement(xmlidentification, 'creator')
         xmlcomposer.set('type', 'composer')
-        xmlcomposer.text = self.mu2composer
-        if len(self.mu2lyricist) > 0:
+        xmlcomposer.text = self.mu2_composer
+        if len(self.mu2_lyricist) > 0:
             xmllyricist = etree.SubElement(xmlidentification, 'creator')
             xmllyricist.set('type', 'poet')
-            xmllyricist.text = self.mu2lyricist
+            xmllyricist.text = self.mu2_lyricist
 
         xmlencoding = etree.SubElement(xmlidentification, 'encoding')
         xmlencoder = etree.SubElement(xmlencoding, 'encoder')
@@ -774,16 +810,17 @@ class symbtrscore(object):
         # measures array
         measure = []
         i = 1  # measure counter
-        measureSum = 0
+        measure_sum = 0
         subdivisioncounter = 0
         measuredelim = "-"
 
         # part1 measure1
         measure.append(etree.SubElement(P1, 'measure'))
-        measure[-1].set('number', str(i) + measuredelim + str(subdivisioncounter))
+        measure[-1].set('number',
+                        str(i) + measuredelim + str(subdivisioncounter))
 
         # 1st measure direction: usul and makam info
-        #						tempo(metronome)
+        #                        tempo(metronome)
         direction = etree.SubElement(measure[-1], 'direction')
         direction.set('placement', 'above')
         directionType = etree.SubElement(direction, 'direction-type')
@@ -791,8 +828,10 @@ class symbtrscore(object):
         # usul and makam info
 
         # tempo info
-        tempo = self.symbtrtempo(self.notes[1].pay, self.notes[1].ms, self.notes[1].payda,
-                                 self.notes[2].pay, self.notes[2].ms, self.notes[2].payda)
+        tempo = self.symbtrtempo(self.notes[1].pay, self.notes[1].ms,
+                                 self.notes[1].payda,
+                                 self.notes[2].pay, self.notes[2].ms,
+                                 self.notes[2].payda)
 
         xmlmetronome = etree.SubElement(directionType, 'metronome')
         xmlbeatunit = etree.SubElement(xmlmetronome, 'beat-unit')
@@ -805,9 +844,11 @@ class symbtrscore(object):
         words = etree.SubElement(directionType, 'words')
         words.set('default-y', '35')
         # add a space in the end, because metronome will be rendered right next to this text
-        #words.text = 'Usul: ' + self.mu2header['usul']['mu2_name'] + ' '
-        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] +\
-                     ', Form: ' + self.mu2header['form']['mu2_name'] + ', Usul: ' + self.mu2header['usul']['mu2_name'] + ' '
+        # words.text = 'Usul: ' + self.mu2_header['usul']['mu2_name'] + ' '
+        words.text = 'Makam: ' + self.mu2_header['makam']['mu2_name'] + \
+                     ', Form: ' + self.mu2_header['form'][
+                         'mu2_name'] + ', Usul: ' + self.mu2_header['usul'][
+                         'mu2_name'] + ' '
 
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
@@ -818,29 +859,30 @@ class symbtrscore(object):
         nof_beats = 4
         beat_type = 4
         if self.usul not in ['serbest', 'belirsiz']:
-            #nof_beats, beat_type = getUsul(self.usul, self.txtpath)
-            nof_beats = self.mu2beatnumber
-            beat_type = self.mu2beattype
+            # nof_beats, beat_type = get_usul(self.usul, self.txtpath)
+            nof_beats = self.mu2_beat_num
+            beat_type = self.mu2_beat_type
 
-            measureLength = nof_beats * nof_divs * (4 / float(beat_type))
+            measure_length = nof_beats * nof_divs * (4 / float(beat_type))
 
             if nof_beats >= 20:
                 if nof_beats % 4 == 0:
-                    self.subdivisionthreshold = measureLength / (nof_beats / 4)
+                    self.subdivisionthreshold = measure_length / (nof_beats / 4)
                 elif nof_beats % 2 == 0:
-                    self.subdivisionthreshold = measureLength / (nof_beats / 2)
+                    self.subdivisionthreshold = measure_length / (nof_beats / 2)
                 elif nof_beats % 3 == 0:
-                    self.subdivisionthreshold = measureLength / (nof_beats / 3)
+                    self.subdivisionthreshold = measure_length / (nof_beats / 3)
 
             if self.verbose:
-                print("After long usul check:", measureLength, self.subdivisionthreshold, nof_beats)
+                print("After long usul check:", measure_length,
+                      self.subdivisionthreshold, nof_beats)
 
         else:
             nof_beats = ''
             beat_type = ''
-            measureLength = 1000
+            measure_length = 1000
 
-        # print(usul, measureLength)
+        # print(usul, measure_length)
 
         # ATTRIBUTES
         atts1 = etree.SubElement(measure[-1], 'attributes')
@@ -849,7 +891,7 @@ class symbtrscore(object):
 
         # key signature
         keysig = etree.SubElement(atts1, 'key')
-        getKeySig(self.makam, keysig)
+        get_key_signature(self.makam, keysig)
         # print(makam)
 
         time = etree.SubElement(atts1, 'time')
@@ -866,17 +908,17 @@ class symbtrscore(object):
         ###LOOP FOR NOTES
         # notes
         word = 0
-        sentence = 0
-        tempsection = 0
-        graceflag = 0
+        # sentence = 0
+        # tempsection = 0
+        # graceflag = 0
         tempatts = ""
         startindex = None
-        tempmeasurehead = measure[-1]
+        # tempmeasurehead = measure[-1]
 
         if self.phraseboundaryinfo == 1:
             xmlgrouping = etree.SubElement(measure[-1], 'grouping')
             xmlgrouping.set('type', 'start')
-            xmlfeature = etree.SubElement(xmlgrouping, 'feature')
+            # xmlfeature = etree.SubElement(xmlgrouping, 'feature')
 
         for e in self.notes:
             tempkod = e.kod
@@ -893,9 +935,11 @@ class symbtrscore(object):
             if tempkod not in ['35', '50', '51', '53', '54', '55']:
                 if not startindex:
                     startindex = tempsira
-                xmlnote = etree.SubElement(measure[-1], 'note')  # note	UNIVERSAL
+                xmlnote = etree.SubElement(measure[-1],
+                                           'note')  # note    UNIVERSAL
                 self.symbt2xmldict[e.sira] = xmlnote
-                xmlnote.append(etree.Comment('symbtr_txt_note_index ' + e.sira))
+                xmlnote.append(
+                    etree.Comment('symbtr_txt_note_index ' + e.sira))
 
                 # kods cannot mapped to musicxml
                 if e.littlenote == 1:
@@ -919,14 +963,19 @@ class symbtrscore(object):
 
                 if e.rest == 0:
                     outkoddict['9'] += 1
-                    pitch = etree.SubElement(xmlnote, 'pitch')  # note pitch XML create
+                    pitch = etree.SubElement(xmlnote,
+                                             'pitch')  # note pitch XML create
                 else:
                     outkoddict['9'] += 1
-                    xmlrest = etree.SubElement(xmlnote, 'rest')  # note rest XML create	REST
+                    xmlrest = etree.SubElement(xmlnote,
+                                               'rest')  # note rest XML create    REST
 
                 if e.grace == 0:
-                    xmlduration = etree.SubElement(xmlnote, 'duration')  # note duration XML create	UNIVERSAL
-                    xmltype = etree.SubElement(xmlnote, 'type')  # note type XML create	UNIVERSAL
+                    # note duration XML create    UNIVERSAL
+                    xmlduration = etree.SubElement(xmlnote, 'duration')
+
+                    # note type XML create    UNIVERSAL
+                    xmltype = etree.SubElement(xmlnote, 'type')
                 # print(l_kod[cnt+1], l_nota[cnt] , l_payda[cnt+1])
                 # print(l_payda[cnt+1])
                 # BAŞLA
@@ -935,19 +984,22 @@ class symbtrscore(object):
                     temp_duration = 0
                     # continue
                 else:
-                    temp_duration = self.addduration(xmlduration, e)  # duration calculation	UNIVERSAL
+                    # duration calculation    UNIVERSAL
+                    temp_duration = self.addduration(xmlduration, e)
                     xmltype.text = e.type
                     self.adddot(xmlnote, e)
                     # print(e.sira, e.type)
 
                 if e.rest == 0:
-                    step = etree.SubElement(pitch, 'step')  # note pitch step XML create
+                    step = etree.SubElement(pitch,
+                                            'step')  # note pitch step XML create
                     step.text = tempstep  # step val #XML assign
 
                     self.addaccidental(xmlnote, pitch, e)
                     # accidental.text = tempacc
 
-                    octave = etree.SubElement(pitch, 'octave')  # note pitch octave XML create
+                    octave = etree.SubElement(pitch,
+                                              'octave')  # note pitch octave XML create
                     octave.text = tempoct  # octave val XML assign
 
                 if e.tuplet == 1:
@@ -960,7 +1012,7 @@ class symbtrscore(object):
                         if self.verbose:
                             print("Tuplet with tremolo or glissando.")
                 if e.tremolo == 1:
-                    if xmlnote.find('notations')is None:
+                    if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
                             print("Notations is added for tremolo.")
@@ -987,13 +1039,19 @@ class symbtrscore(object):
                     if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
-                            print("Notations is added for inverted mordent.", e.sira, e.kod, e.invertedmordent)
+                            print(
+                                "Notations is added for inverted mordent.",
+                                e.sira,
+                                e.kod, e.invertedmordent)
                     self.addinvertedmordent(xmlnotations, e)
                 if e.grupetto == 1:
                     if xmlnote.find('notations') is None:
                         xmlnotations = etree.SubElement(xmlnote, 'notations')
                         if self.verbose:
-                            print("Notations is added for grupetto/turn.", e.sira, e.kod, e.invertedmordent)
+                            print(
+                                "Notations is added for grupetto/turn.",
+                                e.sira,
+                                e.kod, e.invertedmordent)
                     self.addgrupetto(xmlnotations, e)
 
                 if self.xmlgraceslurflag > 0 and 0:  # disabled temporarily
@@ -1005,52 +1063,61 @@ class symbtrscore(object):
 
                 # LYRICS PART
                 xmllyric = etree.SubElement(xmlnote, 'lyric')
-                word = self.addwordinfo(xmllyric, templyric, word, e)  # word keeps the status of current syllable
+                # word keeps the status of current syllable
+                word = self.addwordinfo(xmllyric, templyric, word, e)
+
                 # current lyric text
                 xmltext = etree.SubElement(xmllyric, 'text')
                 xmltext.text = templyric
 
-                # xmltext.text = e.sira if int(e.sira)%50 == 0 else xmltext.text #print note order mod50
+                # xmltext.text = e.sira if int(e.sira)%50 == 0 else
+                # xmltext.text #print note order mod50
 
                 self.countcapitals(templyric)
 
-                if e.lineend == 1:
-                    endline = etree.SubElement(xmllyric, 'end-line')
-
-                    # print(cnt, endlineflag, measureSum)
+                # if e.lineend == 1:
+                #    end_line = etree.SubElement(xmllyric, 'end-line')
+                #    print(cnt, endlineflag, measure_sum)
 
                 # section information
-                if int(tempsira) in self.sectionsextracted.keys():  # instrumental pieces and pieces with section keywords
+                # instrumental pieces and pieces with section keywords
+                if int(tempsira) in self.sectionsextracted.keys():
                     # self.setsection(tempmeasurehead, xmllyric, templyric)
                     tempsection = self.sectionsextracted[int(tempsira)]
                     # print("extracted section", tempsira, tempsection)
                     xmllyric.set('name', tempsection)
                     self.sections.append(tempsection)
 
-                measureSum += temp_duration
-                # print(temp_duration, ' ', measureSum, ' ' , measureLength,' ',i)
+                measure_sum += temp_duration
+                # print(temp_duration, ' ', measure_sum, ' ' , measure_length,
+                # ' ',i)
 
                 # NEW MEASURE
-                if measureSum >= measureLength:
+                if measure_sum >= measure_length:
                     # print(e.sira, i)
-                    # print(measureSum, measureLength)
+                    # print(measure_sum, measure_length)
                     subdivisioncounter = 0
                     i = int(i + 1)
                     measure.append(etree.SubElement(P1, 'measure'))
-                    measure[-1].set('number', str(i) + measuredelim + str(subdivisioncounter))
+                    measure[-1].set('number', str(i) + measuredelim + str(
+                        subdivisioncounter))
                     tempatts = etree.SubElement(measure[-1], 'attributes')
-                    measureSum = 0
-                    tempmeasurehead = measure[-1]
+                    measure_sum = 0
+                    # tempmeasurehead = measure[-1]
 
-                    self.siraintervals.append({"start": startindex,"end": tempsira})
+                    self.siraintervals.append(
+                        {"start": startindex, "end": tempsira})
                     startindex = None
                     # eof notes
 
-                elif self.subdivisionthreshold != 0 and measureSum % self.subdivisionthreshold == 0 and 0:  # disabled temporarily
-                    # print(measureSum, measureLength)
+                # disabled temporarily
+                elif self.subdivisionthreshold != 0 and measure_sum % \
+                        self.subdivisionthreshold == 0 and 0:
+                    # print(measure_sum, measure_length)
                     subdivisioncounter += 1
                     measure.append(etree.SubElement(P1, 'measure'))
-                    measure[-1].set('number', str(i) + measuredelim + str(subdivisioncounter))
+                    measure[-1].set('number', str(i) + measuredelim + str(
+                        subdivisioncounter))
                     tempatts = etree.SubElement(measure[-1], 'attributes')
 
                     xmlbarline = etree.SubElement(measure[-1], 'barline')
@@ -1065,10 +1132,12 @@ class symbtrscore(object):
                         print("Initial usul is already set.")
                 else:
                     try:
-                        measureLength = self.usulchange(measure[-1], e, tempatts, nof_divs)
+                        measure_length = self.usulchange(measure[-1], e,
+                                                        tempatts, nof_divs)
                     except:
                         if self.verbose:
-                            print('Kod', tempkod, 'but no time information.', e.sira, e.kod)
+                            print('Kod', tempkod, 'but no time information.',
+                                  e.sira, e.kod)
 
             elif tempkod == '50':
                 if self.verbose:
@@ -1087,9 +1156,11 @@ class symbtrscore(object):
                 if xmeasure.find('attributes') is not None:
                     tempatts = xmeasure.find('attributes')
                     tempatts.clear()
-                #this part will be active after musescore supports measure repetation
+                # this part will be active after musescore supports measure
+                # repetation
                 # xmlmeasurestyle = etree.SubElement(tempatts, 'measure-style')
-                # xmlmeasurerepeat = etree.SubElement(xmlmeasurestyle, 'measure-repeat')
+                # xmlmeasurerepeat = etree.SubElement(xmlmeasurestyle,
+                # 'measure-repeat')
                 # xmlmeasurerepeat.set('type', 'start')
                 # xmlmeasurerepeat.text = '1'
                 P1.append(xmeasure)  # add copied measure to the score
@@ -1100,8 +1171,8 @@ class symbtrscore(object):
                 measure.append(etree.SubElement(P1, 'measure'))
                 measure[-1].set('number', str(i))
                 tempatts = etree.SubElement(measure[-1], 'attributes')
-                measureSum = 0
-                tempmeasurehead = measure[-1]
+                measure_sum = 0
+                # tempmeasurehead = measure[-1]
 
             elif tempkod == '53':  # phrase boundaries
                 xmlgrouping = etree.SubElement(measure[-1], 'grouping')
@@ -1130,8 +1201,13 @@ class symbtrscore(object):
         return self.getxmlstr()
 
     def getxmlstr(self):
-        return etree.tostring(self.score, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=False,
-            doctype='<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">')
+        doctype = '<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD ' \
+                  'MusicXML 3.0 Partwise//EN" ' \
+                  '"http://www.musicxml.org/dtds/partwise.dtd">'
+        return etree.tostring(self.score, pretty_print=True,
+                              xml_declaration=True, encoding="UTF-8",
+                              standalone=False,
+                              doctype=doctype)
 
     def get_measure_bounds(self):
         return self.siraintervals
@@ -1142,11 +1218,11 @@ class symbtrscore(object):
         f.write(self.getxmlstr())
         f.close()
 
-#errLog.write('\n'.join(set(missingUsuls)))
-#errLog.write('\n' + str(len(set(missingUsuls))))
-#errLog.close()
+# errLog.write('\n'.join(set(missing_usuls)))
+# errLog.write('\n' + str(len(set(missing_usuls))))
+# errLog.close()
 
-#f = open('capitals.txt', 'w')
-#for item in set(capitals):
+# f = open('capitals.txt', 'w')
+# for item in set(capitals):
 #    f.write(item.encode('utf8') + '\n')
-#f.close()
+# f.close()
