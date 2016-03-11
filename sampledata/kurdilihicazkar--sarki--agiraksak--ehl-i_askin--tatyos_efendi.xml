@@ -50,7 +50,9 @@
           <beat-type>4</beat-type>
         </time>
       </attributes>
-      <grouping type="start"/>
+      <grouping type="start">
+        <feature/>
+      </grouping>
       <note>
         <!--symbtr_txt_note_index 2-->
         <pitch>
@@ -3541,6 +3543,7 @@
         <lyric>
           <syllabic>end</syllabic>
           <text>dir  </text>
+          <end-line/>
         </lyric>
       </note>
       <grouping type="stop">
@@ -4795,6 +4798,7 @@
         <lyric>
           <syllabic>end</syllabic>
           <text>dir  </text>
+          <end-line/>
         </lyric>
       </note>
       <note>
@@ -6044,6 +6048,7 @@
         <lyric>
           <syllabic>end</syllabic>
           <text>dir  </text>
+          <end-line/>
         </lyric>
       </note>
       <grouping type="stop">
@@ -7165,6 +7170,7 @@
         <lyric>
           <syllabic>end</syllabic>
           <text>dir  </text>
+          <end-line/>
         </lyric>
       </note>
       <grouping type="stop">
@@ -8419,6 +8425,7 @@
         <lyric>
           <syllabic>end</syllabic>
           <text>dir  </text>
+          <end-line/>
         </lyric>
       </note>
     </measure>
