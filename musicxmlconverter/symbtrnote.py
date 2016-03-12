@@ -254,7 +254,7 @@ class Note(object):
             self.alter = altervalues[self.accidental]
 
     def get_word(self):
-        if 1:  # self.soz1 not in sectionList:
+        if 1:  # self.soz1 not in section_list:
             self.lyric = self.soz1
             self.syllabic = ""  # remove NoneType
             if '  ' in self.lyric:  # line endings
