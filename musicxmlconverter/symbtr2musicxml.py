@@ -874,14 +874,15 @@ class SymbTrScore(object):
                     # note rest XML create	REST
                     etree.SubElement(xmlnote, 'rest')
 
-                if int(temppayda) == 0:
-                    temp_duration = 0
-                else:
+                if e.grace == 0:
                     # note duration XML create	UNIVERSAL
                     xmlduration = etree.SubElement(xmlnote, 'duration')
                     # note type XML create	UNIVERSAL
                     xmltype = etree.SubElement(xmlnote, 'type')
 
+                if int(temppayda) == 0:
+                    temp_duration = 0
+                else:
                     # duration calculation UNIVERSAL
                     temp_duration = self.addduration(num_divs, xmlduration, e)
                     xmltype.text = e.type
