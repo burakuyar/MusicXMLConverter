@@ -241,7 +241,7 @@ class SymbTrScore(object):
         self.name = ""
         self.composer = ""
         self.lyricist = ""
-        self.mu2_header = dict()
+        self.mu2header = dict()
         self.mblink = []
 
         self.keysignature = []
@@ -265,7 +265,10 @@ class SymbTrScore(object):
         self.phraseboundaryinfo = 0
         self.subdivisionthreshold = 0
 
-        self.readsymbtr()  # read symbtr txt file
+        (self.makam, self.form, self.usul, self.name, self.composer,
+         self.mu2header, self.mu2composer, self.mu2lyricist,
+         self.mu2beatnumber, self.mu2beattype, self.notecount) = \
+            self.readsymbtr()  # read symbtr txt file
 
         self.symbt2xmldict = dict()
 
@@ -285,7 +288,7 @@ class SymbTrScore(object):
         data, is_data_valid = extractor.extract(
             self.txtpath, symbtr_name=self.symbtrname)
 
-        self.mu2_header, header_row, is_header_valid = \
+        mu2_header, header_row, is_header_valid = \
             SymbTrReader.read_mu2_header(
                 self.mu2path, symbtr_name=self.symbtrname)
 
@@ -293,44 +296,38 @@ class SymbTrScore(object):
         for item in data['sections']:
             self.sectionsextracted[item['start_note']] = item['name']
 
-        mu2title = self.mu2_header['title']['mu2_title']
+        mu2title = mu2_header['title']['mu2_title']
         if mu2title is None:
-            mu2title = self.mu2_header['makam']['mu2_name'] + \
-                       self.mu2_header['usul']['mu2_name']
+            mu2title = mu2_header['makam']['mu2_name'] + \
+                       mu2_header['usul']['mu2_name']
 
-        mu2composer = self.mu2_header['composer']['mu2_name']
-        mu2lyricist = self.mu2_header['lyricist']['mu2_name']
+        mu2composer = mu2_header['composer']['mu2_name']
+        mu2lyricist = mu2_header['lyricist']['mu2_name']
+        mu2beatnumber = mu2_header['usul']['number_of_pulses']
+        mu2beattype = mu2_header['usul']['mertebe']
 
-        self.mu2composer = mu2composer
-        self.mu2lyricist = mu2lyricist
-        self.mu2beatnumber = self.mu2_header['usul']['number_of_pulses']
-        self.mu2beattype = self.mu2_header['usul']['mertebe']
-        self.name = mu2title
+        return (mu2_header, mu2composer, mu2lyricist, mu2beatnumber,
+                mu2beattype, mu2title)
 
     def readsymbtr(self):
         finfo = self.symbtrname.split('--')
         finfo[-1] = finfo[-1][:-4]
 
-        self.makam = finfo[0]
-        self.form = finfo[1]
-        self.usul = finfo[2]
-        self.name = finfo[3]
+        makam = finfo[0]
+        form = finfo[1]
+        usul = finfo[2]
 
-        if self.name == "":
-            self.name = self.makam + " " + self.form
+        composer = finfo[4]
+        composer = composer.replace('_', ' ').title()
 
-        self.composer = finfo[4]
-
-        # makam = makam.replace('_',' ').title()
-        # form = form.replace('_',' ').title()
-        # usul = usul.replace('_',' ').title()
-        self.name = self.name.replace('_', ' ').title()
-        self.composer = self.composer.replace('_', ' ').title()
-
-        self.sectionextractor()
+        mu2header, mu2composer, mu2lyricist, mu2beatnumber, mu2beattype, \
+            name = self.sectionextractor()
 
         self.readsymbtrlines()
-        self.notecount = len(self.notes)
+        notecount = len(self.notes)
+
+        return (makam, form, usul, name, composer, mu2header, mu2composer,
+                mu2lyricist, mu2beatnumber, mu2beattype, notecount)
 
     def readsymbtrlines(self):
         global kodlist, koddict
@@ -430,8 +427,9 @@ class SymbTrScore(object):
                     syllabic.text = "middle"
         return word
 
-    def addduration(self, xmlduration, e):
-        temp_duration = int(self.nof_divs * 4 * int(e.pay) / int(e.payda))
+    @staticmethod
+    def addduration(num_divs, xmlduration, e):
+        temp_duration = int(num_divs * 4 * int(e.pay) / int(e.payda))
         xmlduration.text = str(temp_duration)
 
         return temp_duration  # duration calculation	UNIVERSAL
@@ -758,21 +756,19 @@ class SymbTrScore(object):
         words.set('default-y', '35')
         # add a space in the end, because metronome will be rendered right next
         # to this text
-        words.text = 'Makam: ' + self.mu2_header['makam']['mu2_name'] + \
-                     ', Form: ' + self.mu2_header['form']['mu2_name'] + \
-                     ', Usul: ' + self.mu2_header['usul']['mu2_name'] + ' '
+        words.text = 'Makam: ' + self.mu2header['makam']['mu2_name'] + \
+                     ', Form: ' + self.mu2header['form']['mu2_name'] + \
+                     ', Usul: ' + self.mu2header['usul']['mu2_name'] + ' '
 
         sound = etree.SubElement(direction, 'sound')
         sound.set('tempo', str(tempo))
 
-        nof_divs = 96
-        self.nof_divs = nof_divs
+        num_divs = 96
         if self.usul not in ['serbest', 'belirsiz']:
-            # nof_beats, beat_type = get_usul(self.usul, self.txtpath)
             temp_num_beats = self.mu2beatnumber
             temp_beat_type = self.mu2beattype
 
-            measure_len = (temp_num_beats * nof_divs *
+            measure_len = (temp_num_beats * num_divs *
                            4 / float(temp_beat_type))
 
             if temp_num_beats >= 20:
@@ -798,7 +794,7 @@ class SymbTrScore(object):
         # ATTRIBUTES
         atts1 = etree.SubElement(measure[-1], 'attributes')
         divs1 = etree.SubElement(atts1, 'divisions')
-        divs1.text = str(nof_divs)
+        divs1.text = str(num_divs)
 
         # key signature
         keysig = etree.SubElement(atts1, 'key')
@@ -837,7 +833,6 @@ class SymbTrScore(object):
             templyric = e.lyric
 
             self.xmlnotationsflag = 0
-
             if tempkod not in ['35', '50', '51', '53', '54', '55']:
                 if not startindex:
                     startindex = tempsira
@@ -879,17 +874,16 @@ class SymbTrScore(object):
                     # note rest XML create	REST
                     etree.SubElement(xmlnote, 'rest')
 
-                if e.grace == 0:
+                if int(temppayda) == 0:
+                    temp_duration = 0
+                else:
                     # note duration XML create	UNIVERSAL
                     xmlduration = etree.SubElement(xmlnote, 'duration')
                     # note type XML create	UNIVERSAL
                     xmltype = etree.SubElement(xmlnote, 'type')
 
-                if int(temppayda) == 0:
-                    temp_duration = 0
-                else:
                     # duration calculation UNIVERSAL
-                    temp_duration = self.addduration(xmlduration, e)
+                    temp_duration = self.addduration(num_divs, xmlduration, e)
                     xmltype.text = e.type
                     self.adddot(xmlnote, e)
 
@@ -1015,7 +1009,7 @@ class SymbTrScore(object):
                 else:
                     try:
                         measure_len = self.usulchange(
-                            measure[-1], e,tempatts, nof_divs)
+                            measure[-1], e, tempatts, num_divs)
                     except IndexError:
                         if self.verbose:
                             print('Kod', tempkod, 'but no time information.',
