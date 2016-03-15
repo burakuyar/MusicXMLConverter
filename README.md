@@ -12,16 +12,18 @@ txtpath = 'path_to_symbtr_txt_file'
 mu2path = 'path_to_symbtr_mu2_file'
 
 # the symbtr-name without the extension, can be omitted if the original filename is kept
-symbtrname = 'kurdilihicazkar--sarki--agiraksak--ehl-i_askin--tatyos_efendi'
+symbtrname = 'kurdi--turku--sofyan--dalda_cikmis--'
 
 # the related musicbrainz mbid is supplied as a url
-mbid_url = 'http://musicbrainz.org/work/b43fd61e-522c-4af4-821d-db85722bf48c' 
+mbid_url = 'http://musicbrainz.org/work/50bc4b54-5e14-4a98-bd44-ee5493479c7d'
 
 # output path
 outpath = 'path_to_symbtr_musicxml_output_file'
 
-piece = symbtrscore(txtpath, mu2path, symbtrname=symbtrname, mbid_url=mbid_url) #txt info is fetched and attributes are calculated
-xmlstr = piece.convertsymbtr2xml()  # xml conversion; outputs the xml score as string
+# instantiate the score object
+piece = SymbTrScore(txtpath, mu2path, symbtrname=symbtrname, mbid_url=mbid_url)
+
+xmlstr = piece.convertsymbtr2xml()   # xml conversion; outputs the xml score as string
 piece.writexml(outpath)  # you can also save the score to a file after calling the conversion method above
 ```
 
@@ -35,7 +37,7 @@ virtualenv env
 source env/bin/activate
 python setup.py install
 ```
-If you want to be able to edit files and have the changes be reflected, then install musicxmlconverter like this instead
+If you want to be able to edit files and have the changes be reflected, then install musicxmlconverter like this instead:
 ```
 pip install -e .
 ```
