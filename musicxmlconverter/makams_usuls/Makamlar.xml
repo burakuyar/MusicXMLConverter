@@ -435,7 +435,7 @@ Donanim 3: Fa5#4</Açiklama>
 <AgHarmOrt>322.9853</AgHarmOrt>
 <AgMedyan>322</AgMedyan>
 <AgStdSapma>0.6</AgStdSapma>
-<makam_adi>hicaz-zirgule</makam_adi>
+<makam_adi>hicaz_zirgule</makam_adi>
 </Makamlar>
 <Makamlar>
 <No>14</No>
@@ -2788,7 +2788,7 @@ Arel&apos;in Şehnâz tanimi benzerdir: &quot;Hüseynî perdesindeki Hümâyûn 
 <AgHarmOrt>317.0431</AgHarmOrt>
 <AgMedyan>318</AgMedyan>
 <AgStdSapma>1.2</AgStdSapma>
-<makam_adi>huzzam-i-cedid</makam_adi>
+<makam_adi>huzzam_icedid</makam_adi>
 </Makamlar>
 <Makamlar>
 <No>83</No>
