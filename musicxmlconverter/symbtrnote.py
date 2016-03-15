@@ -185,19 +185,19 @@ class Note(object):
         elif 1.0 > temp_pay_payda >= 1.0 / 2:
             self.type = 'half'
             temp_undotted = 1.0 / 2
-        elif 1.0/2 > temp_pay_payda >= 1.0 / 4:
+        elif 1.0 / 2 > temp_pay_payda >= 1.0 / 4:
             self.type = 'quarter'
             temp_undotted = 1.0 / 4
-        elif 1.0/4 > temp_pay_payda >= 1.0 / 8:
+        elif 1.0 / 4 > temp_pay_payda >= 1.0 / 8:
             self.type = 'eighth'
             temp_undotted = 1.0 / 8
-        elif 1.0/8 > temp_pay_payda >= 1.0 / 16:
+        elif 1.0 / 8 > temp_pay_payda >= 1.0 / 16:
             self.type = '16th'
             temp_undotted = 1.0 / 16
-        elif 1.0/16 > temp_pay_payda >= 1.0 / 32:
+        elif 1.0 / 16 > temp_pay_payda >= 1.0 / 32:
             self.type = '32nd'
             temp_undotted = 1.0 / 32
-        elif 1.0/32 > temp_pay_payda >= 1.0 / 64:
+        elif 1.0 / 32 > temp_pay_payda >= 1.0 / 64:
             self.type = '64th'
             temp_undotted = 1.0 / 64
 
@@ -227,7 +227,7 @@ class Note(object):
                 dot_val += dot_val / 2
             if self.dot > 1 and 0:
                 if self.verbose:
-                    print("Dots! 1 or more. #ofDots:", self.dot,  self.sira)
+                    print("Dots! 1 or more. #ofDots:", self.dot, self.sira)
             # print(sira, temp_pay_payda, temp_undotted, dot_val,
             # temp_remainder)
 

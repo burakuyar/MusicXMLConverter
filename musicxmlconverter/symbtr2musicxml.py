@@ -298,8 +298,8 @@ class SymbTrScore(object):
 
         mu2title = mu2_header['title']['mu2_title']
         if mu2title is None:
-            mu2title = mu2_header['makam']['mu2_name'] + \
-                       mu2_header['usul']['mu2_name']
+            mu2title = (mu2_header['makam']['mu2_name'] +
+                        mu2_header['usul']['mu2_name'])
 
         mu2composer = mu2_header['composer']['mu2_name']
         mu2lyricist = mu2_header['lyricist']['mu2_name']
@@ -410,8 +410,8 @@ class SymbTrScore(object):
     @staticmethod
     def addwordinfo(xmllyric, templyric, word, e):
         # lyrics word information
-        if len(templyric) > 0 and templyric != "." and \
-                        templyric not in section_list:
+        if (len(templyric) > 0 and templyric != "." and
+                templyric not in section_list):
             syllabic = etree.SubElement(xmllyric, 'syllabic')
             if e.syllabic is not None and word == 1:
                 syllabic.text = "end"
