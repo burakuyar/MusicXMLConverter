@@ -1,6 +1,6 @@
 numpy
 lxml
-git+https://github.com/sertansenturk/symbtrdataextractor.git@v2.0.0-alpha#egg=symbtrdataextractor
+git+https://github.com/sertansenturk/symbtrdataextractor.git#egg=symbtrdataextractor
 
 # needed by symbtrdataextractor via github
 git+https://github.com/alastair/python-musicbrainzngs.git
