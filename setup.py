@@ -4,7 +4,7 @@ from setuptools import setup
 
 
 setup(name='musicxmlconverter',
-      version='1.2.0',
+      version='1.2.0dev',
       author='Burak Uyar',
       author_email='burakuyar@gmail.com',
       license='agpl 3.0',
