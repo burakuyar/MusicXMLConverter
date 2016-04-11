@@ -7,7 +7,7 @@ python:
 #  - "3.5"
 
 # command before installation
-#before_install:
+before_install:
   - pip install codecov
 
 # command to install dependencies
@@ -27,4 +27,3 @@ script:
 # final commands
 after_success:
   - codecov
-#  - coveralls
