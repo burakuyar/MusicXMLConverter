@@ -8,7 +8,7 @@ python:
 
 # command before installation
 #before_install:
-#  - pip install codecov
+  - pip install codecov
 
 # command to install dependencies
 install:
@@ -22,10 +22,9 @@ before_script:
 
 # command to run tests
 script: 
-  - nosetests unittests/converter_test.py
-#  - nosetests --with-coverage
+  - nosetests musicxmlconverter/unittests/converter_test.py --with-coverage
 
 # final commands
-#after_success:
-#  - codecov
+after_success:
+  - codecov
 #  - coveralls
