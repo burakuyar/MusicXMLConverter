@@ -11,7 +11,8 @@ from musicxmlconverter.symbtr2musicxml import SymbTrScore
 txtpath = 'path_to_symbtr_txt_file'
 mu2path = 'path_to_symbtr_mu2_file'
 
-# the symbtr-name without the extension, can be omitted if the original filename is kept
+# the symbtr-name without the extension, can be omitted if the original
+# filename is kept
 symbtrname = 'kurdi--turku--sofyan--dalda_cikmis--'
 
 # the related musicbrainz mbid is supplied as a url
@@ -23,8 +24,11 @@ outpath = 'path_to_symbtr_musicxml_output_file'
 # instantiate the score object
 piece = SymbTrScore(txtpath, mu2path, symbtrname=symbtrname, mbid_url=mbid_url)
 
-xmlstr = piece.convertsymbtr2xml()   # xml conversion; outputs the xml score as string
-piece.writexml(outpath)  # you can also save the score to a file after calling the conversion method above
+# xml conversion; outputs the xml score as string
+xmlstr = piece.convertsymbtr2xml()
+
+# you can also save the score to a file after conversion
+piece.writexml(outpath)
 ```
 
 You can refer to [demo.ipynb](https://github.com/burakuyar/MusicXMLConverter/blob/master/demo.ipynb) for an interactive demo.
