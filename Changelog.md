@@ -1,6 +1,7 @@
-#### MusicXmlConverter v1.1.1
+#### MusicXmlConverter v1.2.0
  - Refactoring according tp PEP8 conventions
- - Fixed several amakam and usul attributes
+ - Added missing makam and usul attributes
+ - Froze requirements
 
 #### MusicXmlConverter v1.1
  - Refactored the code to call the new symbtrdataextractor v2.0.0-alpha syntax

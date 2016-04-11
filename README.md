@@ -6,7 +6,7 @@ Tools to generate MusicXML scores from [SymbTr](https://github.com/MTG/SymbTr) t
 
 ```python
 import os
-from musicxmlconverter.symbtr2musicxml import symbtrscore
+from musicxmlconverter.symbtr2musicxml import SymbTrScore
 
 txtpath = 'path_to_symbtr_txt_file'
 mu2path = 'path_to_symbtr_mu2_file'
