@@ -972,9 +972,8 @@ class SymbTrScore(object):
                     self.sections.append(tempsection)
 
                 measure_sum += temp_duration
-
-                # NEW MEASURE
-                if measure_sum >= measure_len:
+                # NEW MEASURE except it is the end of the piece
+                if measure_sum >= measure_len and e is not self.notes[-1]:
                     subdivisioncounter = 0
                     i = int(i + 1)
                     measure.append(etree.SubElement(p1, 'measure'))
@@ -987,7 +986,6 @@ class SymbTrScore(object):
                                                "end": tempsira})
                     startindex = None
                     # eof notes
-
                 # disabled temporarily
                 elif self.subdivisionthreshold != 0 and measure_sum % \
                         self.subdivisionthreshold == 0 and 0:
@@ -1074,6 +1072,7 @@ class SymbTrScore(object):
                 xmlgrouping.set('type', 'stop')
                 xmlfeature = etree.SubElement(xmlgrouping, 'feature')
                 xmlfeature.set('type', 'flavor')
+
 
         return self.getxmlstr()
 
