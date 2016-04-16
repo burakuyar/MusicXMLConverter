@@ -1073,7 +1073,6 @@ class SymbTrScore(object):
                 xmlfeature = etree.SubElement(xmlgrouping, 'feature')
                 xmlfeature.set('type', 'flavor')
 
-
         return self.getxmlstr()
 
     def getxmlstr(self):
