@@ -3,8 +3,8 @@ import os
 import copy
 import symbtrnote
 from lxml import etree
-from symbtrdataextractor.SymbTrDataExtractor import SymbTrDataExtractor
-from symbtrdataextractor.reader.Mu2Reader import Mu2Reader
+from symbtrdataextractor.dataextractor import DataExtractor
+from symbtrdataextractor.reader.mu2 import Mu2Reader
 
 # koma definitions
 n_natural = 'natural'
@@ -283,7 +283,7 @@ class SymbTrScore(object):
             print(vars(e))
 
     def sectionextractor(self):
-        extractor = SymbTrDataExtractor(
+        extractor = DataExtractor(
             extract_all_labels=True, print_warnings=False)
         data, is_data_valid = extractor.extract(
             self.txtpath, symbtr_name=self.symbtrname)
