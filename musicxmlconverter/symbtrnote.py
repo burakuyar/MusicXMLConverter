@@ -170,9 +170,8 @@ class Note(object):
             self.step = self.notaAE[0]
             self.octave = self.notaAE[1]
         except:
-            if self.verbose:
-                print(self.sira, self.notaAE, "get_pitch error")
-            sys.exit(1)
+            raise ValueError(u'Pitch at line {0:s} with the value "{1:s}" is '
+                             u'invalid.'.format(self.sira, self.notaAE))
 
     def get_note_type(self):
         # print(self.sira, self.kod, "symbtrnote.get_note_type")
